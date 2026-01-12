@@ -27,4 +27,6 @@ int main() {
     cout << num << " raised to the power of " << exponent << " is " << result << endl;
     cout << endl;
     return 0; //exit with no errors
+    // :3
+    // meow
 }
