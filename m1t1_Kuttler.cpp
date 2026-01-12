@@ -4,16 +4,12 @@
 
 //We'll explain this later
 #include <iostream>
+#include <cmath>
 using namespace std;
 
 int main() {
     // Say hello
     cout << "Hello, World!" << endl;
     cout << endl; //blank line
-    cout << "Enter your name: ";
-    string name; //declared a string variable
-    cin >> name; //get input from user
-    cout << "Hello " + name + " welcome to C++!";
-    cout << endl;
     return 0; //exit with no errors
 }
