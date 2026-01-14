@@ -31,4 +31,5 @@ int main() {
 
     cout << "The total price is $" << total_price << endl;
     return 0;
+    // WAZAAAAAAAAAAAAAAAAAAAAAAAAAAP
 }
