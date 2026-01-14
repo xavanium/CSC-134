@@ -10,6 +10,8 @@ and what the total would be
 If we have time we'll make it more interactive. */
 
 #include <iostream>
+#include <iomanip> // used for decimal point stuff
+
 using namespace std;
 
 int main() {
@@ -17,15 +19,21 @@ int main() {
     string item = "bananas"; //change to any thing you want to sell
     int item_count = 100;
     int purchased; //how many user wants
-    double price_each = 0.79;
+    double price_each = 0.50;
     double total_price;
+
+    // Set doubles to print with 2 decimal places
+    cout << setprecision(2) << fixed;
+
     cout << "Welcome to our " << item << " store." << endl;
     cout << "We have " << item_count << " " << item << "." << endl;
     cout << "They cost $" << price_each << " each" << endl;
+    
     //Find out how much user wants to buy
     // Calculate the total
     cout << "How much would you like to buy? ";
     cin >> purchased;
+    
     total_price = purchased * price_each;
     cout << "You bought " << purchased << " " << item << "." << endl;
 
