@@ -7,7 +7,9 @@ Tell the user how many you have,
 how much each costs,
 and what the total would be
 
-If we have time we'll make it more interactive. */
+If we have time we'll make it more interactive.
+As a store owner, I want to set up my store,
+So that I can sell stuff and make $$$. */
 
 #include <iostream>
 #include <iomanip> // used for decimal point stuff
@@ -21,6 +23,19 @@ int main() {
     int purchased; //how many user wants
     double price_each;
     double total_price;
+
+    // PART ONE: SET UP THE STORE
+    
+    cout << "Welcome to the store set up program." << endl;
+    cout << "Name of item? ";
+    getline(cin, item_name); // should let us use spaces
+    cout << "Number of items? ";
+    cin >> item_count;
+    cout << "Price each? ";
+    cin >> price_each;
+
+    cout << endl << "-------" << endl; // separator AHHHHHHHHHHHH
+    // PART TWO: RUN THE STORE
 
     // Set doubles to print with 2 decimal places
     cout << setprecision(2) << fixed;
