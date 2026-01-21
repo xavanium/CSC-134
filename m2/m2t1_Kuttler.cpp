@@ -1,7 +1,7 @@
 // CSC 134
 // M2T1 - User runs store
 // Jacob Kuttler
-// 1/14/26
+// 1/21/26
 /* We're selling "foo" -- you decide what that is
 Tell the user how many you have,
 how much each costs,
@@ -25,7 +25,7 @@ int main() {
     double total_price;
 
     // PART ONE: SET UP THE STORE
-    
+
     cout << "Welcome to the store set up program." << endl;
     cout << "Name of item? ";
     getline(cin, item_name); // should let us use spaces
