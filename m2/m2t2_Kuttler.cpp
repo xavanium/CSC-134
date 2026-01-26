@@ -25,7 +25,7 @@ int main() {
     double tax_amount;
     double total_price; // meal+tip+tax
     double subtotal;
-
+    cout << fixed << setprecision(2);
     cout << "Welcome to the CSC 134 Burger Emporium!" << endl;
     cout << "Today's special: " << meal_name << endl;
     cout << "How many would you like? ";
@@ -39,11 +39,12 @@ int main() {
     cout << num_meals << "x " << meal_name << "\t$" << meal_price << endl;
     cout << "Subtotal: \t\t$" << subtotal << endl;
     cout << "Tip: \t\t\t$" << tip_amount << endl;
-    cout << "Tax: \t\t\t$" << fixed << setprecision(2) << tax_amount << endl;
-    cout << "Total: " << fixed << setprecision(2) << "\t\t$" << total_price << endl;
+    cout << "Tax: \t\t\t$" << tax_amount << endl;
     cout << "-----------------" << endl;
+    cout << "Total: " << "\t\t$" << total_price << endl;
+    cout << endl;
     cout << "THANK YOU COME AGAIN" << endl;
-    cout << fixed << setprecision(2);
+    
 
 
     return 0;
