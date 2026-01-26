@@ -30,12 +30,20 @@ int main() {
     cout << "Today's special: " << meal_name << endl;
     cout << "How many would you like? ";
     cin >> num_meals;
+    cout << "Tip amount (min 0)? ";
+    cin >> tip_amount;
     subtotal = num_meals * meal_price;
-
+    tax_amount = subtotal * tax_rate;
+    total_price = subtotal + tax_amount + tip_amount;
     cout << "YOUR ORDER: " << endl << "-----------------" << endl;
     cout << num_meals << "x " << meal_name << "\t$" << meal_price << endl;
     cout << "Subtotal: \t\t$" << subtotal << endl;
-
+    cout << "Tip: \t\t\t$" << tip_amount << endl;
+    cout << "Tax: \t\t\t$" << fixed << setprecision(2) << tax_amount << endl;
+    cout << "Total: " << fixed << setprecision(2) << "\t\t$" << total_price << endl;
+    cout << "-----------------" << endl;
+    cout << "THANK YOU COME AGAIN" << endl;
+    cout << fixed << setprecision(2);
 
 
     return 0;
