@@ -44,8 +44,5 @@ int main() {
     cout << "Total: " << "\t\t$" << total_price << endl;
     cout << endl;
     cout << "THANK YOU COME AGAIN" << endl;
-    
-
-
     return 0;
 }
