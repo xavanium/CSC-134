@@ -42,5 +42,6 @@ int main() {
     cout << "Profit: \t\t$" << profit << endl << endl; 
     cout << "\n---- THE STATS ----\n";
     cout << "THANK YOU COME AGAIN\n" << endl;
+    // finished i guess ?
     return 0;
 }
