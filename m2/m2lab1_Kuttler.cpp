@@ -10,10 +10,10 @@ Kuttlerj6796
 using namespace std;
 
 int main() {
-
+    
     //Part 1 Set up variables
     //crate variables
-    double length, width, height; //in feet
+    double length, width, height, volume; //in feet
     //Price variabkes
     const double COST_PER_CUBIC_FOOT = 0.23;
     const double CHARGE_PER_CUBIC_FOOT = 0.5;
@@ -28,8 +28,12 @@ int main() {
     cout << "Height? ";
     cin >> height;
     //Part 3 calculation
-    
+    volume = length * width * height;
     //part 4 output
+    cout << setprecision(2) << fixed; // 2 decimal places
+    cout << "\n---- CRATE INFO ----\n";
+    cout << "Volume: " << volume << " cubic feet.\n";
+    
 
     return 0;
 }
