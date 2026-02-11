@@ -1,5 +1,5 @@
 /*
-M3T1
+M3T2
 Compare two rectangles
 */
 #include <iostream>
