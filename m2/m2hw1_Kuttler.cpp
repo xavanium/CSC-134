@@ -1,4 +1,8 @@
-/* */
+/* CSC 134
+Jacob Kuttler
+M2HW1
+2/11/2026
+*/
 #include <iostream>
 #include <iomanip>
 using namespace std;
