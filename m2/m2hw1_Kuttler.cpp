@@ -84,6 +84,6 @@ int main(){
     cout << "How many slices of pizza will each person get? ";
     cin >> slicesAte;
     cout << endl;
-    cout << "There are " << totalSlices - slicesAte << " slices left over.\n" << endl;
+    cout << "There are " << totalSlices - slicesAte*visitors << " slices left over.\n" << endl;
     return 0;
 }
