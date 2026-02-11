@@ -72,5 +72,18 @@ int main(){
 
     cout << "Question 3: " << endl;
     //question 3 code here
+    int pizzas, slices, visitors, slicesAte, totalSlices;
+    cout << "Pizza Party at the ATC building!\n" << endl;
+    cout << "How many pizzas would you like to purchase? ";
+    cin >> pizzas;
+    cout << "How many slices per pizza? ";
+    cin >> slices;
+    totalSlices = slices * pizzas;
+    cout << "How many visitors will you have? ";
+    cin >> visitors;
+    cout << "How many slices of pizza will each person get? ";
+    cin >> slicesAte;
+    cout << endl;
+    cout << "There are " << totalSlices - slicesAte << " slices left over.\n" << endl;
     return 0;
 }
