@@ -29,8 +29,17 @@ int main(){
     area1 = length1*width1;
     area2 = length2*width2;
     //print output
-    cout << fixed << setprecision(2) << endl;
     cout << "The area of the first rectangle is " << area1 << endl;
     cout << "The area of the second tectangle is " << area2 << endl << endl;
+    //compare the rectangles now
+    if (area1>area2){
+        cout << "The first rectangle is largest." << endl;
+    }
+    if (area2>area1){
+        cout << "The second rectangle is largest." << endl;
+    }
+    if (area1==area2){
+        cout << "The areas are the same size." << endl;
+    }
     return 0;
 }
