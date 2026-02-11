@@ -85,5 +85,10 @@ int main(){
     cin >> slicesAte;
     cout << endl;
     cout << "There are " << totalSlices - slicesAte*visitors << " slices left over.\n" << endl;
+
+    cout << "Question 4: \n" << endl;
+    //question 4 code here
+    string letsGo = "Let's go FTCC", letsGo2 = "Let's go Trojans";
+    cout << letsGo << endl << letsGo << endl << letsGo << endl << letsGo2 << endl << endl;
     return 0;
 }
