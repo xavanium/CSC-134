@@ -35,11 +35,11 @@ int main(){
     if (area1>area2){
         cout << "The first rectangle is largest." << endl;
     }
-    if (area2>area1){
+    else if (area2>area1){
         cout << "The second rectangle is largest." << endl;
     }
-    if (area1==area2){
+    else { //none of the above
         cout << "The areas are the same size." << endl;
-    }
+    } // done
     return 0;
 }
