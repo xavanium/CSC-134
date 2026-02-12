@@ -19,7 +19,7 @@ int main(){
     const double PI = 3.14;
     double area = PI*radius*radius;
     cout << "A pizza is 12 inches in diameter.\n";
-    cout << "Therefore, the area of the pizza is " << area << ".\n" << endl;
+    cout << "Therefore, the area of the pizza is " << area << " inches.\n" << endl;
 
     cout << "Problem 4: \n" << endl;
     cout << "The area of each slice of said pizza, if it were cut in 8 even pieces, would be " << area/8 << "." << endl << endl;
