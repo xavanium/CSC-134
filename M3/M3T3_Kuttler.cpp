@@ -23,7 +23,7 @@ int main(){
     total = roll1 + roll2;
 
     //print roll
-    cout << "Roll is: " << roll1 << " + " << roll2 << " = " << total << endl;
+    cout << "Roll is: 🎲 " << roll1 << " + " << roll2 << " = " << total << endl;
     return 0; 
 }
 
