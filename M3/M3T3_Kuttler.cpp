@@ -43,7 +43,7 @@ int main(){
         cout << "Point is " << point << endl;
         cout << "Roll " << point << " before a 7!" << endl;
         bool finished = false;
-        while(!finished){
+        while(!finished){ //re-rolls until a win or loss occurs
             total = roll() + roll();
             cout << "New roll: " << total << endl;
             if (total == point){
