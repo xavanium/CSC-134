@@ -8,11 +8,16 @@ CSC 134
 #include <cstdlib>
 #include <ctime>
 using namespace std;
-//function prototype - declare whats coming
-int roll(); //returns number from 1-6
-int main(){
-    cout << roll() << endl;
 
+//function prototype - declare whats coming
+
+int roll(); //returns number from 1-6
+
+int main(){
+    //seed the RNG
+    srand(time(0));
+    cout << roll() << endl;
+    cout << roll() << endl;
     return 0;
 }
 
