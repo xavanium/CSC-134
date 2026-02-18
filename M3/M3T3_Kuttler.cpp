@@ -15,10 +15,16 @@ int roll(); //returns number from 1-6
 
 int main(){
     //seed the RNG
+    int roll1, roll2, total;
+    string status; // win, lose
     srand(time(0));
-    cout << roll() << endl;
-    cout << roll() << endl;
-    return 0;
+    roll1 = roll();
+    roll2 = roll();
+    total = roll1 + roll2;
+
+    //print roll
+    cout << "Roll is: " << roll1 << " + " << roll2 << " = " << total << endl;
+    return 0; 
 }
 
 int roll(){
