@@ -1,7 +1,7 @@
 /*
 Kuttlerj6796
 CSC 134
-M3LAB2
+M3LAB2 - Letter Grade
 2/25/26
 */
 
