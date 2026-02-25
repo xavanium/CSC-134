@@ -1,15 +1,17 @@
-/*
+/* 
 CSC 134
 Kuttlerj6796
-M3LAB1 
-started 2/18/26
+2.25.26
+M3HW1 - Gold of course cuz im a fricken genius and a genetic freak
 */
 
 #include <iostream>
+#include <iomanip>
+#include <random>
+#include <cstdlib>
+#include <ctime>
 using namespace std;
 
-// List PROTOTYPES of all the choices up here
-// rename these to something that makes sense!
 void walk_inside();
 void walk_past();
 void leave_potion();
@@ -17,11 +19,55 @@ void investigate();
 void shed_search();
 void open_book();
 void decode_cover();
-// main() goes here
-int main() {
+int main(){
+    string answer;
+    cout << "Question 1: " << endl;
+    cout << "Hello, I'm a C++ program! Do you like me?" << endl;
+    cin >> answer;
+    if (answer=="yes"){
+        cout << "YAYYYYYYYYY!!!! :333333" << endl;
+    } else if (answer=="no"){
+        cout << "Oh.. okay :(" << endl;
+    } else {
+        cout << "I don't even know what you're saying!!!" << endl;
+    }
+    cout << endl;
+    cout << "Question 2: " << endl;
+    string meal_name;
+    string where;
+    int num_meals, inOrOut;
+    double tax_rate = 0.08;
+    double tip_amount;
+    double tax_amount;
+    double total_price; // meal+tip+tax
+    double subtotal;
+    double meal_price;
+    cout << fixed << setprecision(2);
+    cout << "Welcome to the CSC 134 Eatery!" << endl;
+    cout << "What would you like to order? " << endl;
+    cin >> meal_name;
+    cout << "How much does that cost again?" << endl;
+    cin >> meal_price;
+    cout << "Enter 1 for dine in or 2 for takeout: ";
+    cin >> inOrOut;
+    if (inOrOut==1){
+        where = "Dine In";
+        tip_amount = meal_price * 0.15;
+    } else {
+        where = "Takeout";
+        tip_amount = 0;
+    }
+    cout << fixed << setprecision(2);
+    cout << "--------------------------" << endl;
+    cout << "YOU ORDERED: \t\t\t" << meal_name << endl;
+    cout << "TAX PRICE: \t\t\t$" << meal_price * 0.08 << endl;
+    cout << "TIP AMOUNT: \t\t\t$" << tip_amount << endl;
+    cout << "TOTAL: \t\t\t\t$" << meal_price + meal_price * tax_amount + tip_amount << endl;
+    cout << "--------------------------" << endl;
+    cout << endl;
+    cout << "Question 3: " << endl;
 
     int choice;
-    // main() starts the game
     cout << "ALIEN SHED (CYOA)" << endl << endl;
     cout << "You're going about your day when you stumble upon a mysterious shed.." << endl;
     cout << "Do You: " << endl; // make these into real choices!
@@ -41,8 +87,21 @@ int main() {
         cout << "I didn't understand that." << endl;
     }
     cout << "*GAME OVER*" << endl << endl;
-
-    return 0; // end of game
+    
+    cout << "Question 4: " << endl;
+    srand(time(0));
+    int randNum1 = rand() % 10;
+    int randNum2 = rand() % 10;
+    int sum;
+    cout << "What's " << randNum1 << " + " << randNum2 << "?" << endl;
+    cin >> sum;
+    if (sum==randNum1 + randNum2){
+        cout << "Correct!";
+    } else {
+        cout << "Incorrect.";
+    }
+    cout << endl;
+    return 0;
 }
 
 // List FULL FUNCTIONS of all the choices at the bottom
