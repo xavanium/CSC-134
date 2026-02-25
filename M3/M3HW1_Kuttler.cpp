@@ -60,6 +60,7 @@ int main(){
     cout << fixed << setprecision(2);
     cout << "--------------------------" << endl;
     cout << "YOU ORDERED: \t\t\t" << meal_name << endl;
+    cout << "SUBTOTAL: \t\t\t$" << meal_price << endl;
     cout << "TAX PRICE: \t\t\t$" << meal_price * 0.08 << endl;
     cout << "TIP AMOUNT: \t\t\t$" << tip_amount << endl;
     cout << "TOTAL: \t\t\t\t$" << meal_price + meal_price * tax_amount + tip_amount << endl;
