@@ -12,7 +12,7 @@ int main(){
     char grade;
     cout << "Enter your numerical grade: ";
     cin >> numGrade;
-    if (numGrade>=90 && numGrade<=100){
+    if (numGrade>=90){
        grade = 'A'; 
     } else if (numGrade>=80 && numGrade<=89){
         grade = 'B';
