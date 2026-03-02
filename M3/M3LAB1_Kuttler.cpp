@@ -1,124 +1,156 @@
 /*
 CSC 134
 Kuttlerj6796
-M3LAB1 
-started 2/18/26
+M3LAB1 - Survival Edition
+Added: HP System, Damage Mechanics, and Combat
 */
 
 #include <iostream>
+#include <cstdlib>
+#include <ctime>
 using namespace std;
 
-// List PROTOTYPES of all the choices up here
-// rename these to something that makes sense!
+// --- GLOBALS ---
+bool has_translator = false;
+int hp = 100; // Starting Health
+
+// --- PROTOTYPES ---
 void walk_inside();
 void walk_past();
 void leave_potion();
-void investigate();
 void shed_search();
-void open_book();
 void decode_cover();
-// main() goes here
+void alien_boss_fight();
+int get_valid_input();
+void check_status(); // New: Checks if player is dead
+
 int main() {
+    srand(time(0));
+    char play_again;
 
-    int choice;
-    // main() starts the game
-    cout << "ALIEN SHED (CYOA)" << endl << endl;
-    cout << "You're going about your day when you stumble upon a mysterious shed.." << endl;
-    cout << "Do You: " << endl; // make these into real choices!
-    cout << "1. Walk inside" << endl;
-    cout << "2. Leave it alone" << endl;
+    do {
+        // Reset for new game
+        hp = 100;
+        has_translator = false;
 
-    cout << "> "; // Give them a prompt to type
-    cin >> choice;
+        cout << "--- ALIEN SHED: SURVIVAL ---" << endl;
+        cout << "HP: " << hp << " | You see the shed ahead." << endl;
+        cout << "1. Enter the shed\n2. Walk past it\n> ";
 
-    if (1 == choice) {
-        walk_inside();
-    }
-    else if (2 == choice) {
-        walk_past();
-    }
-    else {
-        cout << "I didn't understand that." << endl;
-    }
-    cout << "*GAME OVER*" << endl << endl;
+        int choice = get_valid_input();
 
-    return 0; // end of game
+        if (choice == 1) walk_inside();
+        else walk_past();
+
+        if (hp <= 0) cout << "\n*** YOUR JOURNEY ENDS HERE ***" << endl;
+        else cout << "\n*** YOU SURVIVED! ***" << endl;
+
+        cout << "Play again? (y/n): ";
+        cin >> play_again;
+    } while (play_again == 'y' || play_again == 'Y');
+
+    return 0;
 }
 
-// List FULL FUNCTIONS of all the choices at the bottom
-void walk_inside() {
-    int choice;
-    cout << "You walk inside.." << endl;
-    cout << "There is a potion on a table." << endl;
-    cout << "Do you... " << endl;
-    cout << "1. Drink it" << endl;
-    cout << "2. Leave it alone" << endl;
-    cout << "> ";
-    cin >> choice;
-    if (choice == 1){
-        cout << "Poison!!!! Death!!!" << endl;
-    } else if (choice == 2){
-        leave_potion();
+// --- NEW HELPER: DAMAGE SYSTEM ---
+void check_status() {
+    if (hp <= 0) {
+        cout << "Your HP has hit 0. You collapsed!" << endl;
     } else {
-        cout << "You don't make sense";
+        cout << "[Current HP: " << hp << "]" << endl;
     }
+}
+
+void walk_inside() {
+    cout << "\nYou enter. A vial of 'Glowing Goop' sits there." << endl;
+    cout << "1. Drink it\n2. Ignore it\n> ";
+    if (get_valid_input() == 1) {
+        cout << "It tastes like battery acid! You lose 40 HP." << endl;
+        hp -= 40;
+        check_status();
+    }
+    
+    if (hp > 0) leave_potion();
 }
 
 void walk_past() {
-    cout << "You walk past the shed." << endl;
-    cout << "You get hit by an asteroid and die." << endl;
-    cout << "The end." << endl;
-}
-
-void leave_potion(){
-    int choice;
-    cout << "You leave the potion." << endl;
-    cout << "But then you hear a loud crash outside, what do you do?" << endl; 
-    cout << "1. Investigate" << endl;
-    cout << "2. Search the shed" << endl;
-    cout << "> ";
-    cin >> choice;
-    if (choice == 1){
-        investigate();
-    } else if (choice == 2){
-        shed_search();
-    } else {
-        cout << "You don't make sense";
+    cout << "\nAn asteroid fragments nearby!" << endl;
+    int damage = rand() % 50 + 10; // Random damage 10-60
+    cout << "Shrapnel hits you for " << damage << " damage." << endl;
+    hp -= damage;
+    check_status();
+    
+    if (hp > 0) {
+        cout << "You're hurt, but you limp away to safety." << endl;
     }
 }
 
-void investigate(){
-    cout << "You step outside the shed." << endl;
-    cout << "You realize it was an asteroid crashing on earth." << endl;
-    cout << "But then another one crashes down and you die." << endl;
-}
-
-void shed_search(){
-    int choice;
-    cout << "You find a book with a cover that's in an alien language." << endl;
-    cout << "Do you..." << endl;
-    cout << "1. Open it" << endl;
-    cout << "2. Try to decode the cover" << endl;
-    cout << "> ";
-    cin >> choice;
-    if (choice == 1){
-        open_book();
-    } else if (choice == 2){
-        decode_cover();
-    } else {
-        cout << "You don't make sense";
+void leave_potion() {
+    cout << "\nYou hear a heavy metallic THUD behind you." << endl;
+    cout << "A 7-foot tall grey alien stands in the doorway!" << endl;
+    cout << "1. Fight back\n2. Try to talk\n> ";
+    
+    if (get_valid_input() == 1) alien_boss_fight();
+    else {
+        cout << "It doesn't want to talk. It punts you across the room." << endl;
+        hp -= 30;
+        check_status();
+        if (hp > 0) shed_search();
     }
 }
-void open_book(){
-    cout << "You find detailed diagrams of alien biology." << endl;
-    cout << "Then you find a diagram of the real Joe Budden before he was replaced by a body double." << endl;
-    cout << "You realize aliens abducted him and dissected his body, and the one walking among us today is an alien spy." << endl;
-    cout << "Then the CIA shows up and puts you to sleep and takes you away." << endl;
-    cout << "Long Live Your Alien Overlords." << endl;
-    cout << "🛸🛸🛸🛸🛸🛸🛸🛸🛸🛸🛸🛸🛸" << endl;
+
+void alien_boss_fight() {
+    cout << "\n--- COMBAT COMMENCED ---" << endl;
+    int alien_hp = 50;
+    
+    while (alien_hp > 0 && hp > 0) {
+        cout << "Alien HP: " << alien_hp << " | Your HP: " << hp << endl;
+        cout << "1. Punch\n2. Dodge\n> ";
+        int move = get_valid_input();
+        
+        if (move == 1) {
+            int dmg = rand() % 20 + 5;
+            cout << "You land a hit for " << dmg << "!" << endl;
+            alien_hp -= dmg;
+        } else {
+            cout << "You prepared to dodge!" << endl;
+        }
+        
+        // Alien attacks
+        if (alien_hp > 0) {
+            int a_dmg = rand() % 25;
+            if (move == 2) a_dmg /= 2; // Taking half damage if dodging
+            cout << "The alien strikes for " << a_dmg << " damage!" << endl;
+            hp -= a_dmg;
+        }
+    }
+    
+    if (hp > 0) cout << "The alien retreats into the shadows!" << endl;
 }
-void decode_cover(){
-    cout << "It is too much for your puny human brain to understand." << endl;
-    cout << "Your brain collapses into a black hole and you die." << endl;
-    cout << "🛸🛸🛸🛸🛸🛸🛸🛸🛸🛸🛸🛸🛸"<< endl;
+
+void shed_search() {
+    cout << "\nYou find the alien's bag. Inside is a translator." << endl;
+    has_translator = true;
+    cout << "1. Use it on the wall carvings\n2. Run away\n> ";
+    if (get_valid_input() == 1) decode_cover();
+}
+
+void decode_cover() {
+    if (has_translator) {
+        cout << "\nThe wall says: 'Earth is a 1-star resort.' Ouch." << endl;
+    } else {
+        cout << "\nLooking at the symbols makes your head hurt. -10 HP." << endl;
+        hp -= 10;
+        check_status();
+    }
+}
+
+int get_valid_input() {
+    int input;
+    while (!(cin >> input)) {
+        cout << "Numbers only, please: ";
+        cin.clear();
+        cin.ignore(100, '\n');
+    }
+    return input;
 }
