@@ -1,91 +1,18 @@
 :: StoryTitle
 CSC 134: Alien Shed - Survival Edition 2.0
 
+
 :: StoryData
 {
-"ifid": "A1B2C3D4-E5F6-4A1B-8C2D-E3F4G5H6I7J8",
-"format": "Harlowe",
-"format-version": "3.3.8"
+  "ifid": "A1B2C3D4-E5F6-4A1B-8C2D-E3F4G5H6I7J8",
+  "format": "Harlowe",
+  "format-version": "3.3.9",
+  "start": "Start",
+  "zoom": 1
 }
 
-:: Startup [startup]
-(set: $hp to 100)
-(set: $has_translator to false)
-(set: $alien_hp to 50)
 
-:: Start
-<h2 style="color: lime;">--- ALIEN SHED: SURVIVAL ---</h2>
-HP: $hp | You see the shed ahead.
-
-[[1. Enter the shed|WalkInside]]
-[[2. Walk past it|WalkPast]]
-
-:: WalkInside
-You enter. A vial of 'Glowing Goop' sits there.
-
-[[1. Drink it|DrinkGoop]]
-[[2. Ignore it|LeavePotion]]
-
-:: DrinkGoop
-It tastes like battery acid!
-(set: $hp to it - 40)
-<span style="color: red;">You lose 40 HP.</span>
-[Current HP: $hp]
-
-(if: $hp <= 0)[
-[[Continue|GameOver]]
-]
-(else:)[
-[[Continue|LeavePotion]]
-]
-
-:: WalkPast
-An asteroid fragments nearby!
-(set: _damage to (random: 10, 60))
-(set: $hp to it - _damage)
-<span style="color: orange;">Shrapnel hits you for _damage damage.</span>
-[Current HP: $hp]
-
-(if: $hp <= 0)[
-[[Continue|GameOver]]
-]
-(else:)[
-You're hurt, but you limp away to safety.
-[[Continue|SurvivalEnding]]
-]
-
-:: LeavePotion
-You hear a heavy metallic THUD behind you.
-A 7-foot tall grey alien stands in the doorway!
-
-[[1. Fight back|CombatStart]]
-[[2. Try to talk|TalkToAlien]]
-
-:: TalkToAlien
-It doesn't want to talk. It punts you across the room.
-(set: $hp to it - 30)
-<span style="color: red;">You lose 30 HP.</span>
-[Current HP: $hp]
-
-(if: $hp <= 0)[
-[[Continue|GameOver]]
-]
-(else:)[
-[[Continue|ShedSearch]]
-]
-
-:: CombatStart
-<h2 style="color: red;">--- COMBAT COMMENCED ---</h2>
-(set: $alien_hp to 50)
-[[Enter the fray|CombatLoop]]
-
-:: CombatLoop
-Alien HP: $alien_hp | Your HP: $hp
-
-(link-reveal-goto: "1. Punch", "CombatAction")[(set: $action to "punch")]
-(link-reveal-goto: "2. Dodge", "CombatAction")[(set: $action to "dodge")]
-
-:: CombatAction
+:: CombatAction {"position":"1150,25","size":"100,100"}
 (if: $action is "punch")[
 (set: _dmg to (random: 5, 25))
 (set: $alien_hp to it - _dmg)
@@ -136,14 +63,22 @@ The alien retreats into the shadows!
 [[Next Round|CombatLoop]]
 ]
 
-:: ShedSearch
-You find the alien's bag. Inside is a translator.
-(set: $has_translator to true)
 
-[[1. Use it on the wall carvings|DecodeCover]]
-[[2. Run away|SurvivalEnding]]
+:: CombatLoop {"position":"1025,25","size":"100,100"}
+Alien HP: $alien_hp | Your HP: $hp
 
-:: DecodeCover
+(link-reveal-goto: "1. Punch", "CombatAction")[(set: $action to "punch")]
+(link-reveal-goto: "2. Dodge", "CombatAction")[(set: $action to "dodge")]
+
+
+:: CombatStart {"position":"900,25","size":"100,100"}
+<h2 style="color: red;">--- COMBAT COMMENCED ---</h2>
+(set: $alien_hp to 50)
+<img src="https://i.ytimg.com/vi/p21egUjB7kM/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLCNUl7p-MATMx75IRCsBK1GhXzB5A"width="400">
+[[Enter the fray|CombatLoop]]
+
+
+:: DecodeCover {"position":"150,150","size":"100,100"}
 (if: $has_translator)[
 The wall says: 'Earth is a 1-star resort.' Ouch.
 [[Continue|SurvivalEnding]]
@@ -155,11 +90,94 @@ Looking at the symbols makes your head hurt.
 (if: $hp <= 0)[ [[Continue|GameOver]] ] (else:)[ [[Continue|SurvivalEnding]] ]
 ]
 
-:: SurvivalEnding
-<h2 style="color: gold;">*** YOU SURVIVED! ***</h2>
-(link-goto: "Play again?", "Start") (set: $hp to 100)
 
-:: GameOver
+:: DrinkGoop {"position":"400,25","size":"100,100"}
+It tastes like battery acid!
+(set: $hp to it - 40)
+<span style="color: red;">You lose 40 HP.</span>
+[Current HP: $hp]
+<img src="https://photos.peopleimages.com/picture/202311/2973594-im-disgusted-by-the-thought-of-that-zoom_90.jpg"width="200">
+(if: $hp <= 0)[
+[[Continue|GameOver]]
+]
+(else:)[
+[[Continue|LeavePotion]]
+]
+
+
+:: GameOver {"position":"400,150","size":"100,100"}
 <h2 style="color: darkred;">*** YOUR JOURNEY ENDS HERE ***</h2>
 Your HP hit 0.
 (link-goto: "Try again?", "Start") (set: $hp to 100)
+
+
+:: LeavePotion {"position":"650,25","size":"100,100"}
+You hear a heavy metallic THUD behind you.
+A 7-foot tall grey alien stands in the doorway!
+<img src="https://media.gettyimages.com/id/1124671845/vector/illustration-of-a-humanoid-alien.jpg?s=612x612&w=gi&k=20&c=Fzw2xpeQr9S_mEvEgv4NQvPW8Hf1BdqRRvlr23yhIww="width="400">
+[[1. Fight back|CombatStart]]
+[[2. Try to talk|TalkToAlien]]
+
+
+:: ShedSearch {"position":"25,150","size":"100,100"}
+You find the alien's bag. Inside is a translator.
+(set: $has_translator to true)
+
+[[1. Use it on the wall carvings|DecodeCover]]
+[[2. Run away|SurvivalEnding]]
+
+
+:: Start {"position":"150,0","size":"100,100"}
+<h2 style="color: lime;">--- ALIEN SHED: SURVIVAL ---</h2>
+HP: $hp | You see the shed ahead.
+<img src="https://images.northlandsheds.com/cdn-cgi/imagedelivery/IPyHFwhrzXNQqKfK1PNNEQ/northlandsheds.com/Storage-Sheds/10x16-ranch-storage-shed-e1712259494757.jpg/w=9999"width="400">
+[[1. Enter the shed|WalkInside]]
+[[2. Walk past it|WalkPast]]
+
+
+:: Startup [startup] {"position":"25,50","size":"100,100"}
+(set: $hp to 100)
+(set: $has_translator to false)
+(set: $alien_hp to 50)
+
+
+:: SurvivalEnding {"position":"275,150","size":"100,100"}
+<h2 style="color: gold;">*** YOU SURVIVED! ***</h2>
+(link-goto: "Play again?", "Start") (set: $hp to 100)
+
+
+:: TalkToAlien {"position":"775,25","size":"100,100"}
+It doesn't want to talk. It punts you across the room.
+(set: $hp to it - 30)
+<span style="color: red;">You lose 30 HP.</span>
+[Current HP: $hp]
+<img src="https://previews.123rf.com/images/harveysart/harveysart1201/harveysart120100073/12076373-angry-looking-alien-of-the-common-grey-variety.jpg"width="200">
+(if: $hp <= 0)[
+[[Continue|GameOver]]
+]
+(else:)[
+[[Continue|ShedSearch]]
+]
+
+
+:: WalkInside {"position":"275,25","size":"100,100"}
+You enter. A vial of 'Glowing Goop' sits there.
+<img src="https://www.dndbeyond.com/avatars/24423/642/637829132229702343.jpeg" width="200">
+[[1. Drink it|DrinkGoop]]
+[[2. Ignore it|LeavePotion]]
+
+
+:: WalkPast {"position":"525,25","size":"100,100"}
+An asteroid fragments nearby!
+(set: _damage to (random: 10, 60))
+(set: $hp to it - _damage)
+<span style="color: orange;">Shrapnel hits you for _damage damage.</span>
+[Current HP: $hp]
+
+(if: $hp <= 0)[
+[[Continue|GameOver]]
+]
+(else:)[
+You're hurt, but you limp away to safety.
+[[Continue|SurvivalEnding]]
+]
