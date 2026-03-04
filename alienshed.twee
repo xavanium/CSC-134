@@ -82,8 +82,8 @@ It doesn't want to talk. It punts you across the room.
 :: CombatLoop
 Alien HP: $alien_hp | Your HP: $hp
 
-[[1. Punch|CombatAction][(set: $action to "punch")]]
-[[2. Dodge|CombatAction][(set: $action to "dodge")]]
+(link-reveal-goto: "1. Punch", "CombatAction")[(set: $action to "punch")]
+(link-reveal-goto: "2. Dodge", "CombatAction")[(set: $action to "dodge")]
 
 :: CombatAction
 (if: $action is "punch")[
@@ -93,6 +93,28 @@ You land a hit for _dmg!
 ]
 (else:)[
 You prepare to dodge!
+]
+
+(if: $alien_hp > 0)[
+(set: _a_dmg to (random: 0, 25))
+(if: $action is "dodge")[
+(set: _a_dmg to (floor: _a_dmg / 2))
+You dodged! Damage halved.
+]
+The alien strikes for _a_dmg damage!
+(set: $hp to it - _a_dmg)
+]
+
+<hr>
+(if: $hp <= 0)[
+[[You collapsed...|GameOver]]
+]
+(else-if: $alien_hp <= 0)[
+The alien retreats into the shadows!
+[[Continue|ShedSearch]]
+]
+(else:)[
+[[Next Round|CombatLoop]]
 ]
 
 (if: $alien_hp > 0)[
