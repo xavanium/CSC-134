@@ -11,7 +11,13 @@ int main(){
     
     int height, width;
     cout << "Input height and width: ";
+    
     cin >> height >> width;
+    //create line of emojis 
+    for (int i = 1; i<width; i++){
+        cout << emoji << " ";
+    }
+    cout << endl << endl;
     //create a box of emoji symbols
     cout << endl;
     for (int i = 0; i<height; i++){
