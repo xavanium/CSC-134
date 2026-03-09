@@ -8,7 +8,17 @@ using namespace std;
 int main(){
     char symbol = 'X';
     string emoji = "🥹";
-    cout << symbol << endl;
-    cout << emoji << endl;
+    
+    int height, width;
+    cout << "Input height and width: ";
+    cin >> height >> width;
+    //create a box of emoji symbols
+    cout << endl;
+    for (int i = 0; i<height; i++){
+        for (int j = 0; j<width; j++){
+            cout << emoji << " ";
+        }
+        cout << endl;
+    }
     return 0;
 }
