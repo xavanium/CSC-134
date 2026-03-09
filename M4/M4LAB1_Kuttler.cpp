@@ -26,5 +26,6 @@ int main(){
         }
         cout << endl;
     }
+    //and were done i guess
     return 0;
 }
