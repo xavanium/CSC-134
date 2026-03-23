@@ -30,9 +30,27 @@ void write_squares_table(string filename, int start, int finish) {
        outfile.close();
     }
     else {
-         cout << "Could not open file: " << filename << endl;
+        cout << "Could not open file: " << filename << endl;
         return;
     }
-    
 }
+    
+    void read_squares_table(string filename) {
+        //input: filename to open
+        //effect: print out data (assuming two numbers per line)
+        ifstream infile;
+        infile.open(filename);
+        if (infile) {
+            //file is ok
+            int num1, num2;
+            while (infile >> num1 >> num2) {
+                //read 2 numbers at a time 
+                cout << num1 << "\t" << num2 << endl;
+            }
+        } else {
+            //file cant open
+            cout << "Error: couldnt open " << filename << endl;
+            return;
+        }
+    }
 #endif // M5T2_H_INCLUDED
