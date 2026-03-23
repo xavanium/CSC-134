@@ -23,4 +23,5 @@ int main()
     write_squares_table(filename, start, finish);
     read_squares_table(filename);
     return 0;
+    //finished
 }
