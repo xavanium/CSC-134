@@ -1,8 +1,4 @@
-#ifndef M5T2_H_INCLUDED
-#define M5T2_H_INCLUDED
-#include <fstream>
-#include <iostream>
-using namespace std;
+C
 
 int square(int num) {
     // input: a number

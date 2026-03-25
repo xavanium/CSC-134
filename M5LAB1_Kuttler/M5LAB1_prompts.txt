@@ -1,0 +1,12 @@
+/*
+CSC 134
+kuttlerj6796
+3/25/26
+*\
+
+PASTED OLD CODE: 
+    Hey gemini, can you make a cool JS/HTML game with this code, complete with cool visuals and UI/UX??
+PASTED OLD (BUT NEWER) CODE:
+    Hey gemini, i wanna make a text based CYOA game. I have this code already, but id like to add more.. what should i do?
+PASTED NEW CODE:
+    hey gemini, im working on my next C++ project for class and our instructor wants us to include the void functions in a .h file, can you help me convert it? Thanks.
