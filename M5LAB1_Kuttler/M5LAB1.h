@@ -36,8 +36,16 @@ inline void check_status() {
 }
 
 inline void decode_cover() {
-    if (has_translator) cout << "\nWall: 'Earth is a 1-star resort.'" << endl;
-    else {
+    if (has_translator) {
+        if (hp == 100) {
+            cout << "\n!!! SECRET ENDING UNLOCKED !!!" << endl;
+            cout << "The wall glows gold. A hidden compartment opens..." << endl;
+            cout << "You find a ticket for a luxury space cruiser. You're going home in style!" << endl;
+            turns += 50; // Huge score boost for the secret ending
+        } else {
+            cout << "\nThe wall says: 'Earth is a 1-star resort.' Ouch." << endl;
+        }
+    } else {
         hp -= 10;
         cout << "Confusing symbols hurt your brain. -10 HP." << endl;
         check_status();
@@ -77,13 +85,24 @@ inline void alien_boss_fight() {
 
 inline void leave_potion() {
     cout << "\nA giant alien blocks the exit!" << endl;
-    cout << "1. Fight\n2. Talk\n> ";
-    if (get_valid_input() == 1) alien_boss_fight();
-    else {
-        cout << "He doesn't wanna talk.\nHe punts you! -60 HP." << endl;
-        hp -= 60;
-        check_status();
-        if (hp > 0) shed_search();
+    cout << "1. Fight back\n2. Try to talk\n> ";
+    
+    if (get_valid_input() == 1) {
+        alien_boss_fight();
+    } else {
+        // New Sneak/Talk Logic
+        int sneak_chance = rand() % 100;
+
+        if (sneak_chance < 15) { // 15% chance to be a ninja
+            cout << "The alien is confused by your peaceful gestures! It lets you pass." << endl;
+            cout << "You grab the bag while its back is turned. NO DAMAGE!" << endl;
+            shed_search();
+        } else {
+            cout << "It doesn't want to talk. It punts you across the room!" << endl;
+            hp -= 30;
+            check_status();
+            if (hp > 0) shed_search();
+        }
     }
 }
 
