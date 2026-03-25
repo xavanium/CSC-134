@@ -11,6 +11,7 @@ inline bool has_translator = false;
 inline int hp = 100;
 inline int turns = 0;
 inline int high_score = 0;
+inline int games_played = 0; // <--- Add this line
 
 // --- FUNCTIONS ---
 
@@ -79,19 +80,19 @@ inline void leave_potion() {
     cout << "1. Fight\n2. Talk\n> ";
     if (get_valid_input() == 1) alien_boss_fight();
     else {
-        cout << "He punts you! -30 HP." << endl;
-        hp -= 30;
+        cout << "He doesn't wanna talk.\nHe punts you! -60 HP." << endl;
+        hp -= 60;
         check_status();
         if (hp > 0) shed_search();
     }
 }
 
 inline void walk_inside() {
-    cout << "\nYou enter. Drink the Glowing Goop?" << endl;
+    cout << "\nYou enter.\nYou see a bottle of glowing goop on a table.\nDrink it?" << endl;
     cout << "1. Drink\n2. Ignore\n> ";
     if (get_valid_input() == 1) {
         hp -= 40;
-        cout << "It burns! -40 HP." << endl;
+        cout << "Yuck! It tastes like battery acid! -40 HP." << endl;
         check_status();
     }
     if (hp > 0) leave_potion();

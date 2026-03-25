@@ -16,11 +16,14 @@ int main() {
     char play_again;
 
     do {
+        // Increment games played at the start of each run
+        games_played++;
+        
         hp = 100;
         has_translator = false;
         turns = 0;
 
-        cout << "--- ALIEN SHED: SURVIVAL ---" << endl;
+        cout << "\n--- ALIEN SHED: SURVIVAL (Game #" << games_played << ") ---" << endl;
         cout << "Current High Score: " << high_score << " turns" << endl;
         cout << "1. Enter the shed\n2. Walk past it\n> ";
 
@@ -39,7 +42,17 @@ int main() {
 
         cout << "\nPlay again? (y/n): ";
         cin >> play_again;
+
     } while (play_again == 'y' || play_again == 'Y');
+
+    // --- FINAL MESSAGE WHEN USER QUITS ---
+    cout << "\n================================" << endl;
+    cout << "       FINAL SESSION STATS      " << endl;
+    cout << "================================" << endl;
+    cout << "Total Games Played: " << games_played << endl;
+    cout << "Best Turn Count:    " << high_score << endl;
+    cout << "Thanks for playing, survivor!" << endl;
+    cout << "================================" << endl;
 
     return 0;
 }
