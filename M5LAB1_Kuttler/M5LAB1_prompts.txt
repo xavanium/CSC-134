@@ -10,3 +10,11 @@ PASTED OLD (BUT NEWER) CODE:
     Hey gemini, i wanna make a text based CYOA game. I have this code already, but id like to add more.. what should i do?
 PASTED NEW CODE:
     hey gemini, im working on my next C++ project for class and our instructor wants us to include the void functions in a .h file, can you help me convert it? Thanks.
+    wait i noticed that not entering the shed just wins you the game.. maybe we should say "C'mon.. you know you wanna.." until they enter the shed
+    i also noticed that the fight with the alien is VERY in favor of the user.. we should make it more difficult..
+    wait nearly every one of my punches missed.. maybe there should be better odds of it hitting
+    theres not a proper game over message if you run out of hp
+GEMINI:
+    "Would you like me to show you how to add a "High Score" system that tracks how many turns you survived before dying?"
+me:
+    "YES"

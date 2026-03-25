@@ -5,9 +5,10 @@
 using namespace std;
 
 // --- SHARED GLOBALS ---
-// 'extern' tells the compiler these are defined in another file
-extern bool has_translator;
-extern int hp;
+extern bool has_translator = false;
+extern int hp = 100;
+extern int turns = 0;
+extern int high_score;
 
 // --- PROTOTYPES ---
 void walk_inside();
@@ -19,14 +20,6 @@ void alien_boss_fight();
 int get_valid_input();
 void check_status();
 
-void check_status() {
-    if (hp <= 0) {
-        cout << "Your HP has hit 0. You collapsed!" << endl;
-    } else {
-        cout << "[Current HP: " << hp << "]" << endl;
-    }
-}
-
 void walk_inside() {
     cout << "\nYou enter. A vial of 'Glowing Goop' sits there." << endl;
     cout << "1. Drink it\n2. Ignore it\n> ";
@@ -35,16 +28,42 @@ void walk_inside() {
         hp -= 40;
         check_status();
     }
-    if (hp > 0) leave_potion();
+    
+    // Add this check! 
+    if (hp > 0) {
+        leave_potion();
+    }
 }
 
 void walk_past() {
-    cout << "\nAn asteroid fragments nearby!" << endl;
-    int damage = rand() % 50 + 10;
-    cout << "Shrapnel hits you for " << damage << " damage." << endl;
-    hp -= damage;
-    check_status();
-    if (hp > 0) cout << "You're hurt, but you limp away to safety." << endl;
+    int attempts = 0;
+    int choice;
+
+    do {
+        cout << "\nAn asteroid fragments nearby!" << endl;
+        int damage = rand() % 15 + 5; // Smaller "nagging" damage
+        hp -= damage;
+        
+        cout << "Shrapnel nicks you for " << damage << " damage." << endl;
+        check_status();
+
+        if (hp <= 0) return; // Exit if the asteroids actually kill them
+
+        cout << "\nC'mon... you know you wanna see what's inside..." << endl;
+        cout << "1. Fine, I'll go in.\n2. No! I'm staying out here!\n> ";
+        choice = get_valid_input();
+
+        if (choice == 1) {
+            walk_inside();
+            return; // Exit walk_past once they enter
+        }
+        
+        attempts++;
+        if (attempts > 2) {
+            cout << "The cosmic peer pressure is getting intense!" << endl;
+        }
+
+    } while (choice != 1 && hp > 0);
 }
 
 void leave_potion() {
@@ -54,34 +73,60 @@ void leave_potion() {
     if (get_valid_input() == 1) alien_boss_fight();
     else {
         cout << "It doesn't want to talk. It punts you across the room." << endl;
-        hp -= 30;
+        hp -= 50;
         check_status();
         if (hp > 0) shed_search();
     }
 }
 
 void alien_boss_fight() {
-    cout << "\n--- COMBAT COMMENCED ---" << endl;
-    int alien_hp = 50;
+    cout << "\n--- !!! BOSS FIGHT: THE ADJUDICATOR !!! ---" << endl;
+    int alien_hp = 100; 
+    
     while (alien_hp > 0 && hp > 0) {
-        cout << "Alien HP: " << alien_hp << " | Your HP: " << hp << endl;
-        cout << "1. Punch\n2. Dodge\n> ";
+        cout << "\nAlien HP: [" << alien_hp << "] | Your HP: [" << hp << "]" << endl;
+        cout << "1. Heavy Punch\n2. Tactical Dodge\n> ";
         int move = get_valid_input();
+        
+        // --- PLAYER'S TURN ---
         if (move == 1) {
-            int dmg = rand() % 20 + 5;
-            cout << "You land a hit for " << dmg << "!" << endl;
-            alien_hp -= dmg;
+            int hit_roll = rand() % 100; // Use 0-99 for better precision
+            
+            if (hit_roll < 85) { // 85% Hit Chance
+                int dmg = rand() % 15 + 10;
+                
+                // Critical Hit Logic (15% chance for double damage)
+                if (hit_roll < 15) { 
+                    dmg *= 2;
+                    cout << "CRITICAL HIT! You slam the alien for " << dmg << " damage!" << endl;
+                } else {
+                    cout << "You land a solid punch for " << dmg << "!" << endl;
+                }
+                alien_hp -= dmg;
+            } else {
+                cout << "The alien blurred out of the way! You missed!" << endl;
+            }
         } else {
-            cout << "You prepared to dodge!" << endl;
+            cout << "You're focused and ready to move..." << endl;
         }
+        
+        // --- ALIEN'S TURN ---
         if (alien_hp > 0) {
-            int a_dmg = rand() % 25;
-            if (move == 2) a_dmg /= 2;
-            cout << "The alien strikes for " << a_dmg << " damage!" << endl;
+            int a_dmg = (alien_hp < 40) ? (rand() % 25 + 10) : (rand() % 15 + 5);
+
+            if (move == 2) {
+                a_dmg /= 3;
+                cout << "You rolled away! The alien only dealt " << a_dmg << " damage." << endl;
+            } else {
+                cout << "The alien lashes out for " << a_dmg << " damage!" << endl;
+            }
+            
             hp -= a_dmg;
+            if (hp < 0) hp = 0;
         }
     }
-    if (hp > 0) cout << "The alien retreats into the shadows!" << endl;
+    
+    if (hp > 0) cout << "\nThe alien screeches and retreats into the vents!" << endl;
 }
 
 void shed_search() {
@@ -102,6 +147,7 @@ void decode_cover() {
 }
 
 int get_valid_input() {
+    turns++; // Every time the player makes a choice, add a turn
     int input;
     while (!(cin >> input)) {
         cout << "Numbers only, please: ";
@@ -110,4 +156,15 @@ int get_valid_input() {
     }
     return input;
 }
+void check_status() {
+    if (hp <= 0) {
+        hp = 0;
+        cout << "\n--- DEATH HAS ARRIVED ---" << endl;
+        cout << "Turns Survived: " << turns << endl; // Show score on death
+        cout << "Your vision fades to black..." << endl;
+    } else {
+        cout << "[Current HP: " << hp << " | Turn: " << turns << "]" << endl;
+    }
+}
+
 #endif 
