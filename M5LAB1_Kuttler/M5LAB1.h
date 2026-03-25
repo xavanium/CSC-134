@@ -88,13 +88,28 @@ inline void leave_potion() {
 }
 
 inline void walk_inside() {
-    cout << "\nYou enter.\nYou see a bottle of glowing goop on a table.\nDrink it?" << endl;
-    cout << "1. Drink\n2. Ignore\n> ";
+    cout << "\nYou enter. A vial of 'Glowing Goop' sits on a rusty table." << endl;
+    cout << "1. Drink it\n2. Ignore it\n> ";
+    
     if (get_valid_input() == 1) {
-        hp -= 40;
-        cout << "Yuck! It tastes like battery acid! -40 HP." << endl;
+        int risk = rand() % 100; // Roll 0-99
+
+        if (risk < 5) { // 5% chance: Instant Death
+            cout << "CRITICAL FAILURE! Your body dissolves into space-dust." << endl;
+            hp = 0;
+        } 
+        else if (risk < 15) { // 10% chance (5 to 14): Super Soldier Buff
+            cout << "MIRACLE! The goop heals you and makes your muscles bulge!" << endl;
+            hp = 100; 
+            cout << "You feel unstoppable! (HP Restored to 100)" << endl;
+        } 
+        else { // 85% chance: Standard Damage
+            cout << "It tastes like battery acid and regret! You lose 40 HP." << endl;
+            hp -= 40;
+        }
         check_status();
     }
+    
     if (hp > 0) leave_potion();
 }
 

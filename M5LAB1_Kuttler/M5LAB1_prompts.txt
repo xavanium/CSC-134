@@ -15,8 +15,13 @@ PASTED NEW CODE:
     wait nearly every one of my punches missed.. maybe there should be better odds of it hitting
     theres not a proper game over message if you run out of hp
 GEMINI:
-    "Would you like me to show you how to add a "High Score" system that tracks how many turns you survived before dying?"
+    Would you like me to show you how to add a "High Score" system that tracks how many turns you survived before dying?
 me:
-    "YES"
+    YES
     can you just tell me exactly what to copy and paste into my files?? youre confusing me 
     no you idiot im putting the full functions in the .h file and then using the shorthand version in the main cpp file
+    we should add a message that shows the amount of games played and a high score if the user says 'n' at the end
+gemini:
+    Would you like me to add a specific "Rank" title to the final stats (like "Space Cadet" or "Galactic Legend") based on their high score?
+me: 
+    YES

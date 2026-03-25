@@ -16,9 +16,7 @@ int main() {
     char play_again;
 
     do {
-        // Increment games played at the start of each run
         games_played++;
-        
         hp = 100;
         has_translator = false;
         turns = 0;
@@ -38,21 +36,31 @@ int main() {
             cout << "\n*** YOU SURVIVED! ***\nFinal HP: " << hp << endl;
         }
 
-        if (turns > high_score) high_score = turns;
+        if (turns > high_score) {
+            high_score = turns;
+            cout << "NEW PERSONAL BEST!" << endl;
+        }
 
         cout << "\nPlay again? (y/n): ";
         cin >> play_again;
 
     } while (play_again == 'y' || play_again == 'Y');
 
-    // --- FINAL MESSAGE WHEN USER QUITS ---
+    // --- FINAL SESSION STATS & RANKING ---
+    string rank;
+    if (high_score >= 50) rank = "Galactic Legend";
+    else if (high_score >= 30) rank = "Veteran Explorer";
+    else if (high_score >= 15) rank = "Lucky Survivor";
+    else rank = "Space Dust";
+
     cout << "\n================================" << endl;
     cout << "       FINAL SESSION STATS      " << endl;
     cout << "================================" << endl;
     cout << "Total Games Played: " << games_played << endl;
     cout << "Best Turn Count:    " << high_score << endl;
-    cout << "Thanks for playing, survivor!" << endl;
+    cout << "Final Rank:         " << rank << endl;
     cout << "================================" << endl;
+    cout << "Thanks for playing! Press Enter to exit." << endl;
 
     return 0;
 }
