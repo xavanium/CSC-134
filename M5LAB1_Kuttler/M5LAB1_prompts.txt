@@ -1,50 +1,36 @@
-PROJECT SUMMARY: ALIEN SHED - SURVIVAL EDITION
-Developer: Kuttlerj6796
+/*
+CSC 134
+kuttlerj6796
+3/25/26
+*\
 
-Language: C++
-
-Architecture: 2-File System (m5lab1.h and m5lab1.cpp)
-
-1. OVERVIEW
-An interactive text-based survival adventure where the player navigates a hazardous alien environment. The game features a persistent session-based scoring system, high-stakes combat, and hidden outcomes based on player health and luck.
-
-2. CORE MECHANICS
-HP System: Players start with 100 HP. Death occurs at 0 HP, triggering an immediate "Game Over" sequence.
-
-Turn/Score Tracking: Every player decision increments a turns counter, which serves as the final score.
-
-Persistent Stats: The program tracks Total Games Played and a Session High Score that persists until the application is closed.
-
-Ranking System: Upon quitting, players are assigned a rank based on their best performance:
-
-Galactic Legend (50+ turns)
-
-Veteran Explorer (30+ turns)
-
-Lucky Survivor (15+ turns)
-
-Space Dust (<15 turns)
-
-3. KEY LOCATIONS & EVENTS
-The Path: Players are "nagged" via a loop and asteroid damage until they enter the shed.
-
-The Glowing Goop: A high-risk gamble with three outcomes:
-
-5% Critical Failure: Instant Death.
-
-10% Miracle: Full HP restoration and "Super Soldier" status.
-
-85% Standard: -40 HP damage.
-
-The Alien Encounter:
-
-Combat: A buffed boss fight (100 HP) featuring an "Enrage" phase at <40 HP, player Critical Hits (15% chance), and a tactical Dodge mechanic.
-
-The Ninja Path: A rare 15% chance to sneak past the alien and avoid the "punt" damage entirely.
-
-The Wall: Decoding the wall provides flavor text, unless the player has 100 HP, which triggers the Secret Ending (Luxury Escape) and a massive score bonus.
-
-4. FILE STRUCTURE
-m5lab1.h: Contains all inline global variables and full function definitions.
-
-m5lab1.cpp: Contains the main() driver, the game loop, and the final session summary logic.
+PASTED OLD CODE: 
+    Hey gemini, can you make a cool JS/HTML game with this code, complete with cool visuals and UI/UX??
+PASTED OLD (BUT NEWER) CODE:
+    Hey gemini, i wanna make a text based CYOA game. I have this code already, but id like to add more.. what should i do?
+PASTED NEW CODE:
+    hey gemini, im working on my next C++ project for class and our instructor wants us to include the void functions in a .h file, can you help me convert it? Thanks.
+    wait i noticed that not entering the shed just wins you the game.. maybe we should say "C'mon.. you know you wanna.." until they enter the shed
+    i also noticed that the fight with the alien is VERY in favor of the user.. we should make it more difficult..
+    wait nearly every one of my punches missed.. maybe there should be better odds of it hitting
+    theres not a proper game over message if you run out of hp
+GEMINI:
+    Would you like me to show you how to add a "High Score" system that tracks how many turns you survived before dying?
+me:
+    YES
+    can you just tell me exactly what to copy and paste into my files?? youre confusing me 
+    no you idiot im putting the full functions in the .h file and then using the shorthand version in the main cpp file
+    we should add a message that shows the amount of games played and a high score if the user says 'n' at the end
+gemini:
+    Would you like me to add a specific "Rank" title to the final stats (like "Space Cadet" or "Galactic Legend") based on their high score?
+me: 
+    YES
+G:
+    Would you like me to add a "Secret Ending" if they manage to decode the wall while having 100 HP?
+Me:
+    that wouldnt be possible tho cuz you cant get the translator without getting punted.. 
+G:
+    You're absolutely right!
+    *(fixes code)*
+    Would you like me to add a "Hard Mode" toggle at the start of the game that doubles all damage taken?
+TBD
