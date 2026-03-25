@@ -18,3 +18,5 @@ GEMINI:
     "Would you like me to show you how to add a "High Score" system that tracks how many turns you survived before dying?"
 me:
     "YES"
+    can you just tell me exactly what to copy and paste into my files?? youre confusing me 
+    no you idiot im putting the full functions in the .h file and then using the shorthand version in the main cpp file
