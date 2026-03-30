@@ -9,13 +9,14 @@ using namespace std;
 double get_length();
 double get_width();
 double get_area(double width, double length);
+void display_data(double width, double length, double area);
 
 int main(){
     double length, width, area;
     length = get_length();
     width = get_width();
     area = get_area(length, width);
-    cout << "The area is " << area << endl;
+    display_data(length, width, area);
     return 0;
 }
 
@@ -35,4 +36,10 @@ double get_width(){
 
 double get_area(double length, double width){
     return length*width;
+}
+
+void display_data(double length, double width, double area){
+    cout << "Length: " << length << endl;
+    cout << "Width: " << width << endl;
+    cout << "Area: " << area << endl;
 }
