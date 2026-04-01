@@ -72,10 +72,22 @@ void question2(){
     cout << setprecision(2) << fixed;
     cout << "Input the height: ";
     cin >> height;
+        while (height < 0){
+            cout << "Invalid input. Try again: ";
+            cin >> height;
+        }
     cout << "Input the width: ";
     cin >> width;
+        while (width < 0){
+            cout << "Invalid input. Try again: ";
+            cin >> width;
+        }
     cout << "Input the length: ";
     cin >> length;
+        while (length < 0){
+            cout << "Invalid input. Try again: ";
+            cin >> length;
+        }
     area = height*width*length;
     cout << "The area is " << area << endl;
 }
