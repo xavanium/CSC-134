@@ -16,9 +16,10 @@ int main(){
     while (run_again == 'y' || run_again == 'Y'){
     int choice;
     cout << "1. Average rainfall" << endl << "2. Volume of a hyperrectangle" << endl << "3. Convert to roman numeral" << endl << "4. Area of different shapes" << endl << "5. Calculate distance" << endl;
+    cout << "6. Quit" << endl;
     cout << "Enter your choice: ";
     cin >> choice;
-        while (choice < 1 || choice > 5){
+        while (choice < 1 || choice > 6){
             cout << "Invalid. Input again: ";
             cin >> choice;
         }
@@ -37,6 +38,9 @@ int main(){
                 break;
             case 5:
                 question5();
+                break;
+            default:
+                cout << "Goodbye." << endl;
                 break;
         }
         cout << "Would you like to run the program again? (y/n)" << endl;
