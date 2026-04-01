@@ -223,3 +223,4 @@ void question5(){
     distance = speed * time;
     cout << "The vehicle traveled " << distance << " miles." << endl;
 }
+// nyang~
