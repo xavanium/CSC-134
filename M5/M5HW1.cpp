@@ -12,7 +12,7 @@ void question4();
 void question5();
 
 int main(){
-    question4();
+    question5();
     return 0;
 }
 
@@ -128,4 +128,14 @@ void question4(){
             cout << "Goodbye I guess." << endl;
             break;
     }
+}
+
+void question5(){
+    double speed, time, distance;
+    cout << "How fast was the vehicle traveling (mph)? ";
+    cin >> speed;
+    cout << "How many hours did it travel? ";
+    cin >> time;
+    distance = speed * time;
+    cout << "The vehicle traveled " << distance << " miles." << endl;
 }
