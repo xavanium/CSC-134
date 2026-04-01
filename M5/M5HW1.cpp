@@ -12,7 +12,7 @@ void question4();
 void question5();
 
 int main(){
-    question2();
+    question3();
     return 0;
 }
 
@@ -48,4 +48,48 @@ void question2(){
     cin >> length;
     area = height*width*length;
     cout << "The area is " << area << endl;
+}
+
+void question3(){
+    int num;
+    string roman;
+    cout << "Enter a number (1-10): ";
+    cin >> num;
+        while (num < 1 || num > 10){
+            cout << "Invalid number. Try again: ";
+            cin >> num;
+    }
+    switch (num){ 
+        case 1:
+            roman = "I";
+            break;
+        case 2:
+            roman = "II";
+            break;
+        case 3:
+            roman = "III";
+            break;
+        case 4:
+            roman = "IV";
+            break;
+        case 5:
+            roman = "V";
+            break;
+        case 6:
+            roman = "VI";
+            break;
+        case 7:
+            roman = "VII";
+            break;
+        case 8:
+            roman = "VIII";
+            break;
+        case 9:
+            roman = "IX";
+            break;
+        case 10:
+            roman = "X";
+            break;
+    }
+    cout << "The roman numeral version of " << num << " is " << roman << endl;
 }
