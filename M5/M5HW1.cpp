@@ -159,6 +159,7 @@ void question4(){
                     cin >> length;
                 }
             cout << "The area is " << width * length << endl;
+            break;
         case 3:
             double base, height;
             cout << "Input the base: ";
