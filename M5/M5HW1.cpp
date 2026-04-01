@@ -12,7 +12,7 @@ void question4();
 void question5();
 
 int main(){
-    question3();
+    question4();
     return 0;
 }
 
@@ -92,4 +92,40 @@ void question3(){
             break;
     }
     cout << "The roman numeral version of " << num << " is " << roman << endl;
+}
+
+void question4(){
+    int choice;
+    cout << "1. Calculate the area of a Circle" << endl;
+    cout << "2. Calculate the area of a Rectangle" << endl;
+    cout << "3. Calculate the area of a Triangle" << endl;
+    cout << "4. Quit" << endl;
+    cout << "Enter your choice: ";
+    cin >> choice;
+    switch (choice){
+        case 1:
+            double radius;
+            cout << "Input the radius: ";
+            cin >> radius;
+            cout << setprecision(2) << fixed;
+            cout << "The area is " << radius * 3.14159 << endl;
+            break;
+        case 2:
+            double width, length;
+            cout << "Input the width: ";
+            cin >> width;
+            cout << "Input the length: ";
+            cout << "The area is " << width * length << endl;
+        case 3:
+            double base, height;
+            cout << "Input the base: ";
+            cin >> base;
+            cout << "Input the height: ";
+            cin >> height;
+            cout << "The area is " << base*height/2 << endl;
+            break;
+        case 4:
+            cout << "Goodbye I guess." << endl;
+            break;
+    }
 }
