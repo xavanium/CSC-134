@@ -54,14 +54,26 @@ void question1(){
     cin >> m1;
     cout << "Enter the average rainfall for " << m1 << ": ";
     cin >> rf1;
+        while (rf1 < 0){
+            cout << "Invalid input. Try again: ";
+            cin >> rf1;
+        }
     cout << "Enter the second month: ";
     cin >> m2;
     cout << "Enter the average rainfall for " << m2 << ": ";
     cin >> rf2;
+        while (rf2 < 0){
+            cout << "Invalid input. Try again: ";
+            cin >> rf2;
+        }
     cout << "Enter the third month: ";
     cin >> m3;
     cout << "Enter the average rainfall for " << m3 << ": ";
     cin >> rf3;
+        while (rf3 < 0){
+            cout << "Invalid input. Try again: ";
+            cin >> rf3;
+        }
     double avg = (rf1+rf2+rf3) / 3.0;
     cout << "The average rainfall for " << m1 << ", " << m2 << " and " << m3 << " is " << avg;
     cout << endl;
