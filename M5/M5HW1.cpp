@@ -12,7 +12,7 @@ void question4();
 void question5();
 
 int main(){
-    question1();
+    question2();
     return 0;
 }
 
@@ -35,4 +35,17 @@ void question1(){
     cin >> rf3;
     cout << "The average rainfall for " << m1 << ", " << m2 << " and " << m3 << " is " << avg;
     cout << endl;
+}
+
+void question2(){
+    double height, width, length, area;
+    cout << setprecision(2) << fixed;
+    cout << "Input the height: ";
+    cin >> height;
+    cout << "Input the width: ";
+    cin >> width;
+    cout << "Input the length: ";
+    cin >> length;
+    area = height*width*length;
+    cout << "The area is " << area << endl;
 }
