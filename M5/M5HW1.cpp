@@ -186,8 +186,16 @@ void question5(){
     double speed, time, distance;
     cout << "How fast was the vehicle traveling (mph)? ";
     cin >> speed;
+        while (speed < 0){
+            cout << "Invalid input. Try again: ";
+            cin >> speed;
+        }
     cout << "How many hours did it travel? ";
     cin >> time;
+        while (time < 0){
+            cout << "Invalid input. Try again: ";
+            cin >> time;
+        }
     distance = speed * time;
     cout << "The vehicle traveled " << distance << " miles." << endl;
 }
