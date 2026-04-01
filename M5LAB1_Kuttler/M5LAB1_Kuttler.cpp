@@ -8,7 +8,6 @@ M5LAB1 - M3 game, but cooler
 #include <iostream>
 #include <ctime>
 #include "M5LAB1.h"
-
 using namespace std;
 
 int main() {
