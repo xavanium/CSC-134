@@ -132,26 +132,47 @@ void question4(){
     cout << "4. Quit" << endl;
     cout << "Enter your choice: ";
     cin >> choice;
+    cout << setprecision(2) << fixed;
     switch (choice){
         case 1:
             double radius;
             cout << "Input the radius: ";
             cin >> radius;
-            cout << setprecision(2) << fixed;
+                while (radius < 0){
+                    cout << "Invalid input. Try again: ";
+                    cin >> radius;
+                }
             cout << "The area is " << radius * 3.14159 << endl;
             break;
         case 2:
             double width, length;
             cout << "Input the width: ";
             cin >> width;
+                while (width < 0){
+                    cout << "Invalid input. Try again: ";
+                    cin >> width;
+                }
             cout << "Input the length: ";
+            cin >> length;
+                while (length < 0){
+                    cout << "Invalid input. Try again: ";
+                    cin >> length;
+                }
             cout << "The area is " << width * length << endl;
         case 3:
             double base, height;
             cout << "Input the base: ";
             cin >> base;
+                while (base < 0){
+                    cout << "Invalid input. Try again: ";
+                    cin >> base;
+                }
             cout << "Input the height: ";
             cin >> height;
+                while (height < 0){
+                    cout << "Invalid input. Try again: ";
+                    cin >> height;
+                }
             cout << "The area is " << base*height/2 << endl;
             break;
         case 4:
