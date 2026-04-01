@@ -12,14 +12,43 @@ void question4();
 void question5();
 
 int main(){
-    question5();
+    char run_again = 'y';
+    while (run_again == 'y' || run_again == 'Y'){
+    int choice;
+    cout << "1. Average rainfall" << endl << "2. Volume of a hyperrectangle" << endl << "3. Convert to roman numeral" << endl << "4. Area of different shapes" << endl << "5. Calculate distance" << endl;
+    cout << "Enter your choice: ";
+    cin >> choice;
+        while (choice < 1 || choice > 5){
+            cout << "Invalid. Input again: ";
+            cin >> choice;
+        }
+        switch (choice){
+            case 1:
+                question1();
+                break;
+            case 2:
+                question2();
+                break;
+            case 3:
+                question3();
+                break;
+            case 4:
+                question4();
+                break;
+            case 5:
+                question5();
+                break;
+        }
+        cout << "Would you like to run the program again? (y/n)" << endl;
+        cin >> run_again;
+        cout << endl;
+    }
     return 0;
 }
 
 void question1(){
     string m1, m2, m3;
     int rf1, rf2, rf3;
-    double avg = (rf1+rf2+rf3) / 3.0;
     cout << setprecision(2) << fixed;
     cout << "Enter the first month: ";
     cin >> m1;
@@ -33,6 +62,7 @@ void question1(){
     cin >> m3;
     cout << "Enter the average rainfall for " << m3 << ": ";
     cin >> rf3;
+    double avg = (rf1+rf2+rf3) / 3.0;
     cout << "The average rainfall for " << m1 << ", " << m2 << " and " << m3 << " is " << avg;
     cout << endl;
 }
