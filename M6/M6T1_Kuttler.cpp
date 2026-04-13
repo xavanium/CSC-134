@@ -2,7 +2,8 @@
 M6T1 - Arrays (XP Tracker)
 Kuttlerj6796
 4/13/26
-gather XP per floor, then do stats. */
+gather XP per floor, then do stats.
+also a bar graph */
 
 void barChart(int xp[], int floors);
 
@@ -30,7 +31,9 @@ int main(){
     cout << "Total XP: " << total << endl;
     cout << "Avg XP: " << average << endl;
     cout << "Best XP: " << max << endl;
+    cout << "--------------------------------------------" << endl;
     barChart(xp, SIZE);
+    cout << "--------------------------------------------" << endl;
     return 0;
 }
 
