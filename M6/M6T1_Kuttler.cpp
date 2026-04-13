@@ -7,6 +7,14 @@ Kuttlerj6796
 #include <iostream>
 using namespace std;  
 int main(){
-    
+    const int SIZE = 5; //can only be changed at compile time
+    int xp[SIZE];
+    double total = 0.0;
+    double average;
+    cout << "Dungeon XP Tracker" << endl;
+    for (int i = 0; i<SIZE; i++){
+        cout << "Floor " << i+1 << " XP: ";
+        cin >> xp[i];
+    }
     return 0;
 }
