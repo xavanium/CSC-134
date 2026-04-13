@@ -9,13 +9,16 @@ gather XP per floor, then do stats. */
 using namespace std;  
 int main(){
     const int SIZE = 5; //can only be changed at compile time
-    int xp[SIZE];
+    int xp[SIZE], max = 0;
     double total = 0.0;
     double average;
     cout << "Dungeon XP Tracker" << endl;
     for (int i = 0; i<SIZE; i++){
         cout << "Floor " << i+1 << " XP: ";
         cin >> xp[i];
+        if (xp[i] > max) {
+            max = xp[i];
+        }
     }
     for (int i = 0; i<SIZE; i++) {
         total += xp[i];
@@ -24,5 +27,6 @@ int main(){
     cout << "Over " << SIZE << " floors" << endl;
     cout << "Total XP: " << total << endl;
     cout << "Avg XP: " << average << endl;
+    cout << "Best XP: " << max << endl;
     return 0;
 }
