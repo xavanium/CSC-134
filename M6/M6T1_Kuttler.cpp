@@ -9,7 +9,8 @@ gather XP per floor, then do stats. */
 using namespace std;  
 int main(){
     const int SIZE = 5; //can only be changed at compile time
-    int xp[SIZE], max = 0;
+    int xp[SIZE];
+    int max = 0;
     double total = 0.0;
     double average;
     cout << "Dungeon XP Tracker" << endl;
