@@ -1,8 +1,9 @@
 /* CSC 134
 M6T1 - Arrays (XP Tracker)
 Kuttlerj6796
-4/13/26 */
-//gather XP per floor, then do stats.
+4/13/26
+gather XP per floor, then do stats. */
+
 
 #include <iostream>
 using namespace std;  
@@ -16,5 +17,12 @@ int main(){
         cout << "Floor " << i+1 << " XP: ";
         cin >> xp[i];
     }
+    for (int i = 0; i<SIZE; i++) {
+        total += xp[i];
+    }
+    average = total / SIZE;
+    cout << "Over " << SIZE << " floors" << endl;
+    cout << "Total XP: " << total << endl;
+    cout << "Avg XP: " << average << endl;
     return 0;
 }
