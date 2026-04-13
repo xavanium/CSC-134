@@ -4,6 +4,7 @@ Kuttlerj6796
 4/13/26
 gather XP per floor, then do stats. */
 
+void barChart(int xp[], int floors);
 
 #include <iostream>
 using namespace std;  
@@ -29,5 +30,17 @@ int main(){
     cout << "Total XP: " << total << endl;
     cout << "Avg XP: " << average << endl;
     cout << "Best XP: " << max << endl;
+    barChart(xp, SIZE);
     return 0;
+}
+
+void barChart(int xp[], int floors){
+    const int SCALE = 10;
+    for (int i = 0; i < floors; i++){
+        cout << "F" << (i+1) << " | ";
+        for (int b = 0; b<xp[i]/SCALE; b++){
+            cout << "🦛 ";
+        }
+        cout << " " << xp[i] << endl;
+    }
 }
