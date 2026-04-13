@@ -39,7 +39,7 @@ void barChart(int xp[], int floors){
     for (int i = 0; i < floors; i++){
         cout << "F" << (i+1) << " | ";
         for (int b = 0; b<xp[i]/SCALE; b++){
-            cout << "🦛 ";
+            cout << "🦛";
         }
         cout << " " << xp[i] << endl;
     }
