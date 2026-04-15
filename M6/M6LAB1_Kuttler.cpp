@@ -1,5 +1,5 @@
 /*
-M6LAB1 - Slime Roulette (Endless Survival)
+M6LAB1 - Slime Roulette (Pro Edition)
 Kuttlerj6796
 4/15/26
 */
@@ -19,50 +19,52 @@ int main() {
     int roundsWon = 0;
     bool playerAlive = true;
 
-    cout << "--- WELCOME TO ENDLESS SLIME ROULETTE ---" << endl;
-    cout << "Survive as many rounds as possible!" << endl;
+    cout << "--- SLIME ROULETTE: PRO EDITION ---" << endl;
+    cout << "New Item: Type '3' to use your Magnifying Glass (Once per reload)!" << endl;
 
-    // Outer Loop: Keeps the game going until the player dies
     while (playerAlive) {
-        int playerHP = 4, dealerHP = 4; // HP Resets every round
+        int playerHP = 4, dealerHP = 4; 
         cout << "\n========================================";
-        cout << "\n>>> STARTING ROUND " << (roundsWon + 1) << " <<<" << endl;
-        cout << "========================================" << endl;
-
-        // Inner Loop: A single round until someone's HP hits 0
+        cout << "\n>>> CURRENT STREAK: " << roundsWon << " | ENTERING ROUND " << (roundsWon + 1) << " <<<" << endl;
+        
         while (playerHP > 0 && dealerHP > 0) {
-            loadMagazine(magazine, 3, 3); // Consistent load for fairness
+            loadMagazine(magazine, 4, 4); 
             bool playerTurn = true;
+            bool canPeek = true; // One peek per reload
 
             while (!magazine.empty() && playerHP > 0 && dealerHP > 0) {
                 displayMagazine(magazine);
                 
                 if (playerTurn) {
                     int choice = 0;
-                    cout << "\n[PLAYER] HP: " << playerHP << " | [DEALER] HP: " << dealerHP << endl;
-                    cout << "1. Shoot Dealer\n2. Shoot Yourself (Extra turn if Water!)\nChoice: ";
+                    cout << "\n[YOU] HP: " << playerHP << " | [DEALER] HP: " << dealerHP << endl;
+                    cout << "1. Shoot Dealer\n2. Shoot Yourself\n" << (canPeek ? "3. Use Magnifying Glass (PEEK)\n" : "") << "Choice: ";
                     
-                    while (!(cin >> choice) || (choice < 1 || choice > 2)) {
-                        cout << "Invalid choice. Pick 1 or 2: ";
-                        cin.clear();
-                        cin.ignore(100, '\n');
+                    while (!(cin >> choice) || (choice < 1 || choice > 3) || (choice == 3 && !canPeek)) {
+                        cout << "Invalid choice: ";
+                        cin.clear(); cin.ignore(100, '\n');
+                    }
+
+                    if (choice == 3) {
+                        cout << ">> You look into the chamber... The next shell is: " << (magazine.back() == 'S' ? "SLIME" : "WATER") << "!" << endl;
+                        canPeek = false;
+                        continue; // Doesn't end turn
                     }
 
                     char result = fireShot(magazine);
                     if (choice == 2) { 
                         if (result == 'S') {
-                            cout << ">> KERSPLAT! You slimed yourself. -1 HP." << endl;
-                            playerHP--;
-                            playerTurn = false; 
+                            cout << ">> KERSPLAT! -1 HP." << endl;
+                            playerHP--; playerTurn = false; 
                         } else {
-                            cout << ">> CLICK. It was water! EXTRA TURN." << endl;
+                            cout << ">> CLICK. Water. GO AGAIN." << endl;
                         }
                     } else { 
                         if (result == 'S') {
-                            cout << ">> BOOM! Dealer took a slime hit! -1 HP." << endl;
+                            cout << ">> BOOM! Dealer hit! -1 HP." << endl;
                             dealerHP--;
                         } else {
-                            cout << ">> CLICK. Just water. Dealer's turn." << endl;
+                            cout << ">> CLICK. Dealer safe." << endl;
                         }
                         playerTurn = false;
                     }
@@ -70,25 +72,23 @@ int main() {
                 else { // Dealer AI
                     int sCount = 0, wCount = 0;
                     for(char c : magazine) (c == 'S') ? sCount++ : wCount++;
-                    
                     bool shootSelf = (wCount > sCount);
-                    cout << "\n[DEALER] shoots " << (shootSelf ? "THEMSELVES." : "YOU.") << endl;
-
+                    
+                    cout << "\n[DEALER] targets " << (shootSelf ? "THEMSELVES." : "YOU.") << endl;
                     char result = fireShot(magazine);
                     if (shootSelf) {
                         if (result == 'S') {
-                            cout << ">> KERSPLAT! Dealer slimed themselves! -1 HP." << endl;
-                            dealerHP--;
-                            playerTurn = true;
+                            cout << ">> KERSPLAT! Dealer hit. -1 HP." << endl;
+                            dealerHP--; playerTurn = true;
                         } else {
-                            cout << ">> CLICK. Dealer got water! EXTRA TURN." << endl;
+                            cout << ">> CLICK. Dealer extra turn." << endl;
                         }
                     } else {
                         if (result == 'S') {
-                            cout << ">> BOOM! You took a slime hit! -1 HP." << endl;
+                            cout << ">> BOOM! You hit. -1 HP." << endl;
                             playerHP--;
                         } else {
-                            cout << ">> CLICK. Dealer fired water at you." << endl;
+                            cout << ">> CLICK. You safe." << endl;
                         }
                         playerTurn = true;
                     }
@@ -96,29 +96,23 @@ int main() {
             }
         }
 
-        // Check if player survived the round
         if (playerHP <= 0) {
             playerAlive = false;
-            cout << "\nGAME OVER! You dropped dead on Round " << (roundsWon + 1) << "." << endl;
+            cout << "\nGAME OVER. Final Streak: " << roundsWon << endl;
         } else {
             roundsWon++;
-            cout << "\nVICTORY! You won Round " << roundsWon << ". Preparing next opponent..." << endl;
+            cout << "\nVICTORY! Round " << roundsWon << " cleared." << endl;
         }
     }
-
-    cout << "Final Score: " << roundsWon << " rounds survived." << endl;
     return 0;
 }
 
-// Full Functions
 void loadMagazine(vector<char>& mag, int slime, int water) {
     mag.clear(); 
     for (int i = 0; i < slime; i++) mag.push_back('S');
     for (int i = 0; i < water; i++) mag.push_back('W');
-    random_device rd;
-    mt19937 gen(rd());
-    shuffle(mag.begin(), mag.end(), gen);
-    cout << "\n* Dealer loads " << slime << " Slime and " << water << " Water. *" << endl;
+    random_device rd; mt19937 gen(rd()); shuffle(mag.begin(), mag.end(), gen);
+    cout << "\n* 8-shot magazine loaded (" << slime << "S, " << water << "W) *" << endl;
 }
 
 void displayMagazine(const vector<char>& mag) {
@@ -128,7 +122,5 @@ void displayMagazine(const vector<char>& mag) {
 }
 
 char fireShot(vector<char>& mag) {
-    char shell = mag.back(); 
-    mag.pop_back(); 
-    return shell;
+    char shell = mag.back(); mag.pop_back(); return shell;
 }
