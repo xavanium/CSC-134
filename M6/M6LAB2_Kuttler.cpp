@@ -55,10 +55,10 @@ int main() {
         cin >> choice;
 
         int direction;
-        if (choice == "north") direction = NORTH;
-        else if (choice == "east") direction = EAST;
-        else if (choice == "south") direction = SOUTH;
-        else if (choice == "west") direction = WEST;
+        if (choice == "north" || choice == "n") direction = NORTH;
+        else if (choice == "east" || choice == "e") direction = EAST;
+        else if (choice == "south" || choice == "s") direction = SOUTH;
+        else if (choice == "west" || choice == "w") direction = WEST;
         else if (choice == "quit") {
             keep_playing = false;
             continue;
