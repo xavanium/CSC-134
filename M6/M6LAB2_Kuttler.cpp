@@ -50,6 +50,17 @@ int main() {
         // Show current location 
         cout << "\nLocation: " << room_names[current_room] << endl;
         cout << room_descriptions[current_room] << endl;
+        // Show exits
+        cout << "Exits: ";
+        const string directions[NUM_DIRECTIONS] = {"N ","E ","S ","W "};
+        for (int dir=0; dir < NUM_DIRECTIONS; dir++) {
+            if (connections[current_room][dir] != -1) {
+                cout << directions[dir]; // print that direction e.g. N
+            }
+        }
+        cout << endl; 
+
+        // read input
         cout << "Directions: (north, east, south, west) or 'quit'" << endl;
         cout << "> ";
         cin >> choice;
