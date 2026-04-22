@@ -1,3 +1,12 @@
+/* 
+CSC 134
+Kuttlerj6796
+M6BONUS2 - Image Generation (Tung Tung Tung Sahur)
+4/22/26
+PROMPT: Hey Gemini, can you write a C++ script that creates a PPM image of Tung Tung Tung Sahur?
+PROMPT: that looks good, but why did you skip the big tung tung tung?
+*/
+
 #include <iostream>
 #include <fstream>
 #include <cmath>
