@@ -33,7 +33,18 @@ string Restaurant::getName() const{
 double Restaurant::getRating() const{
     return rating;
 }
-int main(){
 
+int main(){
+    string name;
+    double rating;
+    cout << "Restaurant Review" << endl;
+    cout << "Enter restaurant name: ";
+    cin >> name;
+    cout << "Enter restaurant rating: ";
+    cin >> rating;
+
+    Restaurant rest1=Restaurant(name, rating);
+    cout << rest1.getName();
+    cout << rest1.getRating();
     return 0;
 }
