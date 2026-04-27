@@ -1,11 +1,12 @@
 /* CSC 134
-M7T1 - Classes (Refactored)
+M7T1 - Classes (Star Display Edition)
 4/27/26 
 */
 
 #include <iostream>
 #include <string>
-#include <iomanip> // For output formatting
+#include <iomanip>
+#include <cmath> // For floor()
 
 using namespace std;
 
@@ -15,28 +16,38 @@ class Restaurant {
         double rating;
 
     public:
-        // Using a Member Initializer List here
         Restaurant(string n, double r) : name(n), rating(r) {}
 
-        // Setters
+        // Setters and Getters
         void setName(string n) { name = n; }
-        void setRating(double r) {
-            if (r >= 0 && r <= 5.0) {
-                rating = r;
-            } else {
-                rating = 0; // Default fallback
-            }
-        }
-
-        // Getters
+        void setRating(double r) { rating = (r >= 0 && r <= 5) ? r : 0; }
         string getName() const { return name; }
         double getRating() const { return rating; }
 
-        // Added a helper method to print info easily
+        // The Star logic
+        void printStars() const {
+            int fullStars = static_cast<int>(rating); // Get the whole number
+            double fractionalPart = rating - fullStars;
+
+            cout << "Rating: ";
+            // Print full stars
+            for (int i = 0; i < fullStars; ++i) {
+                cout << "*";
+            }
+
+            // Print half star if the decimal is 0.5 or higher
+            if (fractionalPart >= 0.5) {
+                cout << "½";
+            }
+
+            cout << " (" << fixed << setprecision(1) << rating << "/5.0)" << endl;
+        }
+
         void display() const {
-            cout << "\n--- Restaurant Summary ---" << endl;
-            cout << "Name:   " << name << endl;
-            cout << "Rating: " << fixed << setprecision(1) << rating << "/5.0 stars" << endl;
+            cout << "\n============================" << endl;
+            cout << "RESTAURANT: " << name << endl;
+            printStars();
+            cout << "============================" << endl;
         }
 };
 
@@ -44,22 +55,13 @@ int main() {
     string name;
     double rating;
 
-    cout << "=== Restaurant Review System ===" << endl;
-    
     cout << "Enter restaurant name: ";
     getline(cin, name);
 
-    cout << "Enter restaurant rating (0-5): ";
-    while (!(cin >> rating) || rating < 0 || rating > 5) {
-        cout << "Invalid input. Please enter a number between 0 and 5: ";
-        cin.clear(); // Clear error flags
-        cin.ignore(1000, '\n'); // Discard bad input
-    }
+    cout << "Enter rating (e.g., 3.5, 4.0): ";
+    cin >> rating;
 
-    // Create object
     Restaurant rest1(name, rating);
-
-    // Show the results
     rest1.display();
 
     return 0;
