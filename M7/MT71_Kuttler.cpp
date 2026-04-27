@@ -44,7 +44,7 @@ int main(){
     cin >> rating;
 
     Restaurant rest1=Restaurant(name, rating);
-    cout << rest1.getName();
-    cout << rest1.getRating();
+    cout << rest1.getName() << endl;
+    cout << rest1.getRating() << endl;
     return 0;
 }
