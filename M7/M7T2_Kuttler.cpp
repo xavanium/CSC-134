@@ -24,6 +24,7 @@ int main(){
     r1.setLength(l);
     r1.setWidth(w);
     std::cout << "Area is " << r1.getArea() << std::endl;
+    r1.drawRectangle();
     return 0;
 }
 

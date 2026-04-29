@@ -1,5 +1,5 @@
 //rectangle.h
-
+#include <iostream>
 #ifndef RECTANGLE_H
 #define RECTANGLE_H
 
@@ -23,6 +23,15 @@ class Rectangle {
         }
         void setLength(double l) {
             length = l;
+        }
+        void drawRectangle(){
+            std::string pixel = "&";
+            for (int i=0; i<length; i++) {
+                for (int j=0; j<width; j++) {
+                    std::cout << pixel;
+                }
+                std::cout << std::endl;
+            }
         }
 };
 //maybe add drawRectangle() later
