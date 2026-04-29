@@ -11,9 +11,16 @@ void set_name(std::string& name);
 int main(){
     std::string name = "Bob";
     std::string *pName = &name;
+    set_name(name);
     std::cout << "name = " << name << std::endl;
     std::cout << "pName = " << pName << std::endl;
     std::cout << "*pName = " << *pName << std::endl;
+
+    //part 2 - rectangles
+    Rectangle r1;
+    r1.setWidth(8);
+    r1.setLength(10);
+    std::cout << "Area is " << r1.getArea() << std::endl;
     return 0;
 }
 
