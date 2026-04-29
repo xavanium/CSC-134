@@ -7,11 +7,23 @@ class Rectangle {
     private:
         double width, length;
     public:
-        double getWidth() const;
-        double getLength() const;
-        double getArea() const;
-        void setWidth(double w);
-        void setLength(double l);
+        double getWidth() const {
+            return width;
+        }
+        double getLength() const {
+            return length;
+        }
+        double getArea() const {
+            //always calculated fresh
+            double area = length*width;
+            return area;
+        }
+        void setWidth(double w) {
+            width = w;
+        }
+        void setLength(double l) {
+            length = l;
+        }
 };
 
 #endif
