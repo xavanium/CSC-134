@@ -4,6 +4,9 @@ Kuttlerj6796
 4/29/26 */
 
 #include <iostream>
+//function prototypes
+std::string setName();
+void set_name(std::string& name);
 
 int main(){
     std::string name = "Bob";
@@ -16,4 +19,16 @@ int main(){
     std::cout << "pName = " << pName << std::endl;
     std::cout << "*pName = " << *pName << std::endl;
     return 0;
+}
+
+std::string setName(){
+    std::string name;
+    std::cout << "Enter name: ";
+    std::cin >> name;
+    return name;
+}
+
+void set_name(std::string& name) {
+    std::cout << "Enter name: ";
+    std::cin >> name;
 }
