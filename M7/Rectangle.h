@@ -25,5 +25,6 @@ class Rectangle {
             length = l;
         }
 };
+//maybe add drawRectangle() later
 
 #endif
