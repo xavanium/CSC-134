@@ -10,6 +10,7 @@ void set_name(std::string& name);
 
 int main(){
     std::string name = "Bob";
+    std::string *pName = &name;
     std::cout << "name = " << name << std::endl;
     std::cout << "pName = " << pName << std::endl;
     std::cout << "*pName = " << *pName << std::endl;
@@ -24,6 +25,6 @@ std::string setName(){
 }
 
 void set_name(std::string& name) {
-    std::cout << "Enter name: ";
+    std::cout <<"Enter name: ";
     std::cin >> name;
 }
