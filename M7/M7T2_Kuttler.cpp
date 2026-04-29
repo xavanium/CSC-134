@@ -2,7 +2,7 @@
 M7T2 - Pointers
 Kuttlerj6796
 4/29/26 */
-
+#include "Rectangle.h"
 #include <iostream>
 //function prototypes
 std::string setName();
