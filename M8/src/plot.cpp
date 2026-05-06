@@ -37,21 +37,26 @@ void bresenhamLine(WINDOW* win, int x0, int y0, int x1, int y1, char ch) {
 
 }  // namespace
 
-ScreenPos worldToScreen(double /*real*/, double /*imag*/, const Viewport& /*vp*/,
-                        int /*cols*/, int /*rows*/) {
-    // TODO (user-owned, §7).
-    // Map (real, imag) to (col, row), where col grows right and row grows DOWN.
-    // Origin should land near (cols/2, rows/2).
-    // 1 world unit = 1 / vp.scale character cells (or scale by aspect for rows).
-    return {0, 0};
+ScreenPos worldToScreen(double real, double imag, const Viewport& vp,
+                        int cols, int rows) {
+    if (vp.scale <= 0.0) return {cols / 2, rows / 2};
+    const double dx = (real - vp.centerR) / vp.scale;
+    const double dy = (imag - vp.centerI) / vp.scale;
+    const int col = cols / 2 + static_cast<int>(std::round(dx));
+    const int row = rows / 2 - static_cast<int>(std::round(dy));
+    return {col, row};
 }
 
-Viewport autoFitViewport(const std::vector<ComplexNumber>& /*nums*/, int /*cols*/,
-                         int /*rows*/) {
-    // TODO (user-owned, §7).
-    // Scan numbers for max(|real|, |imag|); pick scale so they fit with ~10% padding.
-    // Fall back to scale = 1.0 when all numbers are 0 or list is empty.
-    return {0.0, 0.0, 1.0};
+Viewport autoFitViewport(const std::vector<ComplexNumber>& nums, int cols,
+                         int rows) {
+    double maxAbs = 0.0;
+    for (const auto& n : nums) {
+        maxAbs = std::max(maxAbs, std::abs(n.real()));
+        maxAbs = std::max(maxAbs, std::abs(n.imag()));
+    }
+    const int halfCells = std::min(cols, rows) / 2;
+    if (maxAbs == 0.0 || halfCells < 1) return {0.0, 0.0, 1.0};
+    return {0.0, 0.0, (maxAbs * 1.1) / halfCells};
 }
 
 void drawAxes(WINDOW* win, const Viewport& vp) {

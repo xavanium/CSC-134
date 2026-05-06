@@ -1,53 +1,54 @@
 #include "ComplexNumber.h"
 
+#include <cmath>
+#include <sstream>
 #include <stdexcept>
-
-// Per design_doc.md §7, the body of this class is the user's to write
-// without AI. Stubs below let the project link; replace each as you go.
 
 ComplexNumber::ComplexNumber(std::string name, double real, double imag)
     : name_(std::move(name)), real_(real), imag_(imag) {}
 
 double ComplexNumber::magnitude() const {
-    // TODO: return sqrt(real_^2 + imag_^2). Use std::hypot for safety.
-    return 0.0;
+    return std::hypot(real_, imag_);
 }
 
 double ComplexNumber::argument() const {
-    // TODO: return atan2(imag_, real_).
-    return 0.0;
+    return std::atan2(imag_, real_);
 }
 
 ComplexNumber ComplexNumber::conjugate() const {
-    // TODO: return ComplexNumber("", real_, -imag_).
-    return ComplexNumber("", 0.0, 0.0);
+    return ComplexNumber("", real_, -imag_);
 }
 
-ComplexNumber ComplexNumber::operator+(const ComplexNumber& /*other*/) const {
-    // TODO
-    return ComplexNumber("", 0.0, 0.0);
+ComplexNumber ComplexNumber::operator+(const ComplexNumber& other) const {
+    return ComplexNumber("", real_ + other.real_, imag_ + other.imag_);
 }
 
-ComplexNumber ComplexNumber::operator-(const ComplexNumber& /*other*/) const {
-    // TODO
-    return ComplexNumber("", 0.0, 0.0);
+ComplexNumber ComplexNumber::operator-(const ComplexNumber& other) const {
+    return ComplexNumber("", real_ - other.real_, imag_ - other.imag_);
 }
 
-ComplexNumber ComplexNumber::operator*(const ComplexNumber& /*other*/) const {
-    // TODO: (a+bi)(c+di) = (ac - bd) + (ad + bc)i
-    return ComplexNumber("", 0.0, 0.0);
+ComplexNumber ComplexNumber::operator*(const ComplexNumber& other) const {
+    return ComplexNumber("",
+                        real_ * other.real_ - imag_ * other.imag_,
+                        real_ * other.imag_ + imag_ * other.real_);
 }
 
 ComplexNumber ComplexNumber::operator/(const ComplexNumber& other) const {
-    // TODO: (a+bi)/(c+di) = ((ac+bd) + (bc-ad)i) / (c^2 + d^2).
-    // Throw std::domain_error if other.magnitude() < epsilon.
-    if (other.real_ == 0.0 && other.imag_ == 0.0) {
+    constexpr double kEpsilon = 1e-12;
+    if (other.magnitude() < kEpsilon) {
         throw std::domain_error("division by zero complex number");
     }
-    return ComplexNumber("", 0.0, 0.0);
+    const double denom = other.real_ * other.real_ + other.imag_ * other.imag_;
+    const double r = (real_ * other.real_ + imag_ * other.imag_) / denom;
+    const double i = (imag_ * other.real_ - real_ * other.imag_) / denom;
+    return ComplexNumber("", r, i);
 }
 
 std::string ComplexNumber::toString() const {
-    // TODO: format like "z1 = 3 + 4i" (handle negative imag as "3 - 4i").
-    return name_;
+    std::ostringstream oss;
+    if (!name_.empty()) oss << name_ << " = ";
+    oss << real_;
+    if (imag_ >= 0.0) oss << " + " << imag_ << "i";
+    else              oss << " - " << -imag_ << "i";
+    return oss.str();
 }
