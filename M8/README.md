@@ -28,6 +28,10 @@ Imaginary part:
 
 The full plot is redrawn after each entry, with every number you've entered shown as a vector from the origin and labeled by index in the legend.
 
+## New to complex numbers?
+
+See [`complex_numbers_primer.md`](complex_numbers_primer.md) — a friendly explanation of what the real/imaginary prompts mean, what the Argand plane is, and how to read the `|z|` magnitude line.
+
 ## Files
 
 ```
