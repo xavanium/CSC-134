@@ -86,7 +86,7 @@ void renderPlot(const std::vector<ComplexNumber>& numbers) {
         for (size_t i = 0; i < endpoints.size(); ++i) {
             int col = endpoints[i].first;
             int row = endpoints[i].second;
-            const char marker = (i < 10) ? static_cast<char>('0' + i) : '*';
+            const char marker = '*';
             if (col >= 0 && col < kWidth && row >= 0 && row < kHeight) {
                 grid[row][col] = marker;
             }
@@ -103,7 +103,7 @@ void renderPlot(const std::vector<ComplexNumber>& numbers) {
 
     if (!numbers.empty()) {
         for (size_t i = 0; i < numbers.size(); ++i) {
-            const char marker = (i < 10) ? static_cast<char>('0' + i) : '*';
+            const char marker = '*';
             std::cout << "  [" << marker << "] " << numbers[i].toString()
                       << "   |z| = " << std::fixed << std::setprecision(2)
                       << numbers[i].magnitude() << "\n";
