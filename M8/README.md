@@ -1,16 +1,15 @@
 # ComplexLab
 
-An ncurses Argand-diagram workspace. Build, save, and visualize complex numbers on the complex plane, with geometric visualizations of magnitude, addition, multiplication, and conjugation.
+A terminal program that prompts for the real and imaginary parts of complex numbers and plots them as vectors on an ASCII Argand plane.
 
-**Track:** A (Badge track)
+**Track:** A
 **Course:** CSC 134 — Project 4
 
 ## Build
 
-Requires `g++` with C++17 and the `ncurses` development headers.
+Requires `g++` with C++17. No external libraries.
 
 ```bash
-sudo apt-get install -y libncurses-dev   # one-time, on Debian/Ubuntu/Codespaces
 make
 ```
 
@@ -20,22 +19,29 @@ make
 ./complexlab
 ```
 
-Workspace persists to `complexlab_workspace.txt`; operation history to `complexlab_history.log`. Both are created in the current working directory on first save.
+At each iteration the program prompts:
+
+```
+Real part (or 'q' to quit):
+Imaginary part:
+```
+
+The full plot is redrawn after each entry, with every number you've entered shown as a vector from the origin and labeled by index in the legend.
 
 ## Files
 
 ```
 M8/
-├── design_doc.md          ← Design + requirements + test plan
-├── src/                   ← Source
-│   ├── ComplexNumber.h/.cpp
-│   ├── plot.h/.cpp
-│   ├── workspace.h/.cpp
-│   ├── ui.h/.cpp
-│   └── main.cpp
+├── design_doc.md          ← Design (v2, scaled-down) + requirements + test plan
+├── src/
+│   ├── ComplexNumber.h/.cpp   ← class: real, imag, magnitude, argument, toString
+│   ├── plot.h/.cpp            ← ASCII rendering: axes, auto-scale, Bresenham line
+│   ├── input.h/.cpp           ← validated stdin prompts
+│   └── main.cpp               ← input/plot loop
 ├── Makefile
-├── ai_log.md              ← AI interaction log
-├── testing_log.md         ← Test cases + results
+├── ai_log.md
+├── testing_log.md
+├── complexComparison.cpp  ← original M5 program ComplexLab grew out of
 └── README.md
 ```
 

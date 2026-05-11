@@ -1,219 +1,113 @@
 #include "plot.h"
+#include "ComplexNumber.h"
 
+#include <algorithm>
 #include <cmath>
-#include <cstdlib>
+#include <iomanip>
+#include <iostream>
 #include <string>
-
-// Rendering primitives are AI-assisted (design_doc.md §6).
-// worldToScreen / autoFitViewport are user-owned (§7) — left as TODO stubs.
+#include <vector>
 
 namespace {
 
-constexpr double kPi = 3.14159265358979323846;
+constexpr int kWidth  = 61;
+constexpr int kHeight = 21;
+constexpr int kCx     = kWidth  / 2;
+constexpr int kCy     = kHeight / 2;
 
-void plotChar(WINDOW* win, int col, int row, char ch) {
-    int h, w;
-    getmaxyx(win, h, w);
-    if (col >= 0 && col < w && row >= 0 && row < h) {
-        mvwaddch(win, row, col, ch);
-    }
+bool isAxisOrEmpty(char c) {
+    return c == ' ' || c == '-' || c == '|' || c == '+' || c == '>' || c == '^';
 }
 
-// Bresenham's line algorithm — generic 8-octant version.
-void bresenhamLine(WINDOW* win, int x0, int y0, int x1, int y1, char ch) {
-    const int dx = std::abs(x1 - x0);
-    const int sx = (x0 < x1) ? 1 : -1;
-    const int dy = -std::abs(y1 - y0);
-    const int sy = (y0 < y1) ? 1 : -1;
+void drawLine(std::vector<std::string>& grid,
+              int x0, int y0, int x1, int y1, char ch) {
+    int dx =  std::abs(x1 - x0);
+    int dy = -std::abs(y1 - y0);
+    int sx = x0 < x1 ? 1 : -1;
+    int sy = y0 < y1 ? 1 : -1;
     int err = dx + dy;
     while (true) {
-        plotChar(win, x0, y0, ch);
+        if (x0 >= 0 && x0 < kWidth && y0 >= 0 && y0 < kHeight) {
+            if (isAxisOrEmpty(grid[y0][x0])) grid[y0][x0] = ch;
+        }
         if (x0 == x1 && y0 == y1) break;
-        const int e2 = 2 * err;
+        int e2 = 2 * err;
         if (e2 >= dy) { err += dy; x0 += sx; }
         if (e2 <= dx) { err += dx; y0 += sy; }
     }
 }
 
+// Returns units-per-column. scale_y = 2 * scale_x compensates for the
+// terminal cell aspect ratio (~2 tall : 1 wide), so one unit on the real
+// axis covers the same on-screen distance as one unit on the imaginary axis.
+double autoScaleX(const std::vector<ComplexNumber>& nums) {
+    double maxR = 1.0, maxI = 1.0;
+    for (const auto& z : nums) {
+        maxR = std::max(maxR, std::abs(z.real()));
+        maxI = std::max(maxI, std::abs(z.imag()));
+    }
+    const double halfW = (kWidth  - 1) / 2.0 - 2.0;
+    const double halfH = (kHeight - 1) / 2.0 - 2.0;
+    double sx_for_real = maxR / halfW;
+    double sx_for_imag = maxI / (2.0 * halfH);
+    return std::max({sx_for_real, sx_for_imag, 0.2});
+}
+
 }  // namespace
 
-ScreenPos worldToScreen(double real, double imag, const Viewport& vp,
-                        int cols, int rows) {
-    if (vp.scale <= 0.0) return {cols / 2, rows / 2};
-    const double dx = (real - vp.centerR) / vp.scale;
-    const double dy = (imag - vp.centerI) / vp.scale;
-    const int col = cols / 2 + static_cast<int>(std::round(dx));
-    const int row = rows / 2 - static_cast<int>(std::round(dy));
-    return {col, row};
-}
+void renderPlot(const std::vector<ComplexNumber>& numbers) {
+    std::vector<std::string> grid(kHeight, std::string(kWidth, ' '));
 
-Viewport autoFitViewport(const std::vector<ComplexNumber>& nums, int cols,
-                         int rows) {
-    double maxAbs = 0.0;
-    for (const auto& n : nums) {
-        maxAbs = std::max(maxAbs, std::abs(n.real()));
-        maxAbs = std::max(maxAbs, std::abs(n.imag()));
-    }
-    const int halfCells = std::min(cols, rows) / 2;
-    if (maxAbs == 0.0 || halfCells < 1) return {0.0, 0.0, 1.0};
-    return {0.0, 0.0, (maxAbs * 1.1) / halfCells};
-}
+    for (int x = 0; x < kWidth;  ++x) grid[kCy][x] = '-';
+    for (int y = 0; y < kHeight; ++y) grid[y][kCx] = '|';
+    grid[kCy][kCx]          = '+';
+    grid[kCy][kWidth - 1]   = '>';
+    grid[0][kCx]            = '^';
 
-void drawAxes(WINDOW* win, const Viewport& vp) {
-    int h, w;
-    getmaxyx(win, h, w);
+    if (!numbers.empty()) {
+        const double sx = autoScaleX(numbers);
+        const double sy = 2.0 * sx;
 
-    const auto origin = worldToScreen(0.0, 0.0, vp, w, h);
-
-    // Horizontal axis (imag == 0): draw across full width at origin's row.
-    if (origin.row >= 0 && origin.row < h) {
-        for (int c = 0; c < w; ++c) plotChar(win, c, origin.row, '-');
-    }
-    // Vertical axis (real == 0): draw across full height at origin's col.
-    if (origin.col >= 0 && origin.col < w) {
-        for (int r = 0; r < h; ++r) plotChar(win, origin.col, r, '|');
-    }
-    // Origin marker.
-    plotChar(win, origin.col, origin.row, '+');
-}
-
-void drawPoint(WINDOW* win, const ComplexNumber& z, const Viewport& vp, char marker) {
-    int h, w;
-    getmaxyx(win, h, w);
-    const auto pos = worldToScreen(z.real(), z.imag(), vp, w, h);
-    plotChar(win, pos.col, pos.row, marker);
-    if (!z.name().empty() && pos.col + 2 < w && pos.row >= 0 && pos.row < h) {
-        mvwaddstr(win, pos.row, pos.col + 1, z.name().c_str());
-    }
-}
-
-void drawVector(WINDOW* win, const ComplexNumber& z, const Viewport& vp) {
-    int h, w;
-    getmaxyx(win, h, w);
-    const auto from = worldToScreen(0.0, 0.0, vp, w, h);
-    const auto to = worldToScreen(z.real(), z.imag(), vp, w, h);
-    bresenhamLine(win, from.col, from.row, to.col, to.row, '*');
-    plotChar(win, to.col, to.row, '#');
-}
-
-void drawMagnitudeCircle(WINDOW* win, const ComplexNumber& z, const Viewport& vp) {
-    int h, w;
-    getmaxyx(win, h, w);
-    const auto origin = worldToScreen(0.0, 0.0, vp, w, h);
-
-    const double mag = std::hypot(z.real(), z.imag());
-    if (mag <= 0.0 || vp.scale <= 0.0) return;
-
-    // Parametric: avoids edge cases of midpoint algorithm when terminal cells
-    // are non-square (a future extension can scale rows differently from cols).
-    const int radCells = static_cast<int>(std::round(mag / vp.scale));
-    if (radCells < 1) return;
-
-    constexpr int kSteps = 180;
-    for (int i = 0; i < kSteps; ++i) {
-        const double theta = (2.0 * kPi * i) / kSteps;
-        const int col = origin.col + static_cast<int>(std::round(radCells * std::cos(theta)));
-        const int row = origin.row - static_cast<int>(std::round(radCells * std::sin(theta)));
-        plotChar(win, col, row, '.');
-    }
-}
-
-void drawParallelogram(WINDOW* win, const ComplexNumber& z1, const ComplexNumber& z2,
-                       const Viewport& vp) {
-    int h, w;
-    getmaxyx(win, h, w);
-    const auto p0 = worldToScreen(0.0, 0.0, vp, w, h);
-    const auto p1 = worldToScreen(z1.real(), z1.imag(), vp, w, h);
-    const auto p2 = worldToScreen(z2.real(), z2.imag(), vp, w, h);
-    const auto p3 = worldToScreen(z1.real() + z2.real(), z1.imag() + z2.imag(), vp, w, h);
-
-    bresenhamLine(win, p0.col, p0.row, p1.col, p1.row, ':');
-    bresenhamLine(win, p1.col, p1.row, p3.col, p3.row, ':');
-    bresenhamLine(win, p3.col, p3.row, p2.col, p2.row, ':');
-    bresenhamLine(win, p2.col, p2.row, p0.col, p0.row, ':');
-    plotChar(win, p3.col, p3.row, '@');  // sum endpoint
-}
-
-void drawRotation(WINDOW* win, const ComplexNumber& z1, const ComplexNumber& z2,
-                  const Viewport& vp) {
-    int h, w;
-    getmaxyx(win, h, w);
-    if (vp.scale <= 0.0) return;
-    const auto origin = worldToScreen(0.0, 0.0, vp, w, h);
-
-    const double mag1 = std::hypot(z1.real(), z1.imag());
-    const double mag2 = std::hypot(z2.real(), z2.imag());
-    const double arg1 = std::atan2(z1.imag(), z1.real());
-    const double arg2 = std::atan2(z2.imag(), z2.real());
-
-    if (mag1 <= 0.0) return;
-
-    const double magProduct = mag1 * mag2;
-    constexpr int kSteps = 40;
-    for (int i = 0; i <= kSteps; ++i) {
-        const double t = static_cast<double>(i) / kSteps;
-        const double angle = arg1 + arg2 * t;
-        const double rad = mag1 + (magProduct - mag1) * t;
-        const int radCells = static_cast<int>(std::round(rad / vp.scale));
-        const int col = origin.col + static_cast<int>(std::round(radCells * std::cos(angle)));
-        const int row = origin.row - static_cast<int>(std::round(radCells * std::sin(angle)));
-        plotChar(win, col, row, 'o');
-    }
-}
-
-void openPlotView(const std::vector<ComplexNumber>& numbers) {
-    if (numbers.empty()) return;
-
-    int h, w;
-    getmaxyx(stdscr, h, w);
-    if (h < 20 || w < 40) {
-        clear();
-        mvaddstr(h / 2, 2,
-                 "Terminal too small for plot (need >= 40 cols x 20 rows).");
-        mvaddstr(h / 2 + 1, 2, "Resize and try again. Press any key.");
-        refresh();
-        getch();
-        return;
-    }
-
-    Viewport vp = autoFitViewport(numbers, w, h);
-    bool showSum = false;
-    bool showProduct = false;
-
-    while (true) {
-        getmaxyx(stdscr, h, w);  // re-read in case of resize
-        clear();
-        drawAxes(stdscr, vp);
+        std::vector<std::pair<int, int>> endpoints;
+        endpoints.reserve(numbers.size());
         for (const auto& z : numbers) {
-            drawMagnitudeCircle(stdscr, z, vp);
-            drawVector(stdscr, z, vp);
-            drawPoint(stdscr, z, vp, '*');
-        }
-        if (showSum && numbers.size() >= 2) {
-            drawParallelogram(stdscr, numbers[0], numbers[1], vp);
-        }
-        if (showProduct && numbers.size() >= 2) {
-            drawRotation(stdscr, numbers[0], numbers[1], vp);
+            int col = kCx + static_cast<int>(std::round(z.real() / sx));
+            int row = kCy - static_cast<int>(std::round(z.imag() / sy));
+            endpoints.emplace_back(col, row);
+            if (col != kCx || row != kCy) {
+                drawLine(grid, kCx, kCy, col, row, '.');
+            }
         }
 
-        const std::string status =
-            "arrows=pan  +/-=zoom  s=sum  m=product  q=back   "
-            "scale=" + std::to_string(vp.scale);
-        mvaddstr(h - 1, 0, status.c_str());
-        refresh();
+        // Lines start at origin and overwrite '+'; restore it before placing
+        // markers, so a marker at (0,0) still wins.
+        grid[kCy][kCx] = '+';
 
-        const int c = getch();
-        switch (c) {
-            case 'q': case 'Q': return;
-            case KEY_LEFT:  vp.centerR -= vp.scale * 2.0; break;
-            case KEY_RIGHT: vp.centerR += vp.scale * 2.0; break;
-            case KEY_UP:    vp.centerI += vp.scale * 2.0; break;
-            case KEY_DOWN:  vp.centerI -= vp.scale * 2.0; break;
-            case '=': case '+': vp.scale *= 0.8; break;
-            case '-': case '_': vp.scale *= 1.25; break;
-            case 's': case 'S': showSum = !showSum; break;
-            case 'm': case 'M': showProduct = !showProduct; break;
-            default: break;
+        for (size_t i = 0; i < endpoints.size(); ++i) {
+            int col = endpoints[i].first;
+            int row = endpoints[i].second;
+            const char marker = (i < 10) ? static_cast<char>('0' + i) : '*';
+            if (col >= 0 && col < kWidth && row >= 0 && row < kHeight) {
+                grid[row][col] = marker;
+            }
         }
+    }
+
+    std::cout << "\n  Im\n";
+    for (int y = 0; y < kHeight; ++y) {
+        std::cout << "  " << grid[y];
+        if (y == kCy) std::cout << " Re";
+        std::cout << "\n";
+    }
+    std::cout << "\n";
+
+    if (!numbers.empty()) {
+        for (size_t i = 0; i < numbers.size(); ++i) {
+            const char marker = (i < 10) ? static_cast<char>('0' + i) : '*';
+            std::cout << "  [" << marker << "] " << numbers[i].toString()
+                      << "   |z| = " << std::fixed << std::setprecision(2)
+                      << numbers[i].magnitude() << "\n";
+        }
+        std::cout << "\n";
     }
 }

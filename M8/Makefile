@@ -1,6 +1,5 @@
 CXX      := g++
 CXXFLAGS := -std=c++17 -Wall -Wextra -O2
-LDLIBS   := -lncurses
 
 SRCS := $(wildcard src/*.cpp)
 OBJS := $(SRCS:.cpp=.o)
@@ -11,7 +10,7 @@ TARGET := complexlab
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
-	$(CXX) $(CXXFLAGS) $(OBJS) -o $@ $(LDLIBS)
+	$(CXX) $(CXXFLAGS) $(OBJS) -o $@
 
 src/%.o: src/%.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@

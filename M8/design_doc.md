@@ -1,23 +1,23 @@
-# Design Document — Project 4: ComplexLab
+# Design Document — Project 4: ComplexLab (v2, scaled-down)
 
 **Name:** Xavanium
-**Track:** A (Badge track)
-**Project Title:** ComplexLab — An ncurses Argand Diagram Workspace
-**One-sentence pitch:** An interactive terminal workspace where you build, save, and visualize complex numbers on the Argand plane, with geometric visualizations of magnitude, addition, multiplication, and conjugation.
+**Track:** A
+**Project Title:** ComplexLab — A stdout ASCII Argand-plane visualizer
+**One-sentence pitch:** A terminal program that prompts the user for the real and imaginary parts of complex numbers and plots them as vectors on an ASCII Argand plane.
 
 ---
 
 ## 0. Origin & Motivation
 
-ComplexLab grows out of `complexComparison.cpp`, a 30-line program that took two complex numbers and reported which had the larger magnitude. The original answers a single yes/no question. ComplexLab keeps that comparison as one feature, then asks: *what would make complex numbers feel real?* The answer is seeing them — as points, as vectors, as circles of radius |z|, and as the geometric outcomes of arithmetic.
+This project grows out of `complexComparison.cpp`, a small program that took two complex numbers and compared their magnitudes. ComplexLab keeps the spirit of "type in a number, see something happen" and adds the part that was missing: actually *seeing* the number as a point and a vector on the complex plane.
 
-The expansion is not "more operations bolted on." It is a shift from calculator to workspace: numbers persist, get named, get plotted, get compared, and the operation history is replayable.
+**Scope note (v2):** The earlier draft of this design aimed at a full ncurses workspace with persistence, geometric overlays, and pan/zoom. That scope blew up during the first build attempt. This v2 design intentionally cuts back to one core interaction — input a number, see it plotted — and leaves the larger pieces as stretch goals.
 
 ---
 
 ## 1. The Problem
 
-Complex numbers are abstract for students who haven't seen them visualized. ComplexLab is a tool a math or engineering student could open, type in `z1 = 3 + 4i`, type in `z2 = 1 - 2i`, and *see* the magnitude as a circle, the sum as a parallelogram, the product as a rotation-and-scale on the plane. It saves named numbers and an operation log between sessions, so a study session resumes where it left off.
+Complex numbers are hard to picture without a visualization. A student who types `3` and then `4` should immediately see the vector from the origin to (3, 4) on the plane, with axes labeled, so the abstract pair `(a, b)` becomes a concrete arrow.
 
 ---
 
@@ -25,81 +25,58 @@ Complex numbers are abstract for students who haven't seen them visualized. Comp
 
 | Data | Type | What Changes It |
 |---|---|---|
-| Workspace numbers | `std::vector<ComplexNumber>` | User adds via menu; loaded from save file on startup; deleted via menu |
-| Operation log | `std::vector<std::string>` | Every comparison, arithmetic op, and conjugate appends a line; loaded from log file on startup |
-| Plot viewport | `struct Viewport { double centerR, centerI; double scale; }` | Auto-fit on plot open; user pan/zoom keys adjust |
-| Currently-selected operands | `std::optional<size_t> lhsIdx, rhsIdx` | Set when user picks numbers for an op or plot |
-| Workspace file path | `std::string` (default `complexlab_workspace.txt`) | Set at startup, optionally overridden via menu |
-| Log file path | `std::string` (default `complexlab_history.log`) | Same |
-| ncurses windows | `WINDOW*` (main, plot, status) | Created on init, destroyed on exit |
+| Entered numbers | `std::vector<ComplexNumber>` | User adds one per loop iteration |
+| Loop control flag | `bool running` | Set to false when user enters `q` at the real-part prompt |
+| Plot grid dimensions | `const int` width/height | Fixed at compile time (e.g., 61 cols × 21 rows) |
+| Auto-fit scale | `double` (per replot) | Recomputed from current vector each time the plot renders |
+
+Two variables (the number vector and `running`) change during program execution, which clears the C-tier "state tracking" bar. The vector itself is the meaningful data structure required for B tier.
 
 ---
 
 ## 3. Function / Component Map
 
-### `ComplexNumber` class (custom, A-tier requirement)
+### `ComplexNumber` class
 
-| Member | What It Does | Inputs | Outputs |
-|---|---|---|---|
-| `ComplexNumber(name, real, imag)` | Constructor | string, double, double | object |
-| `magnitude()` | Returns √(r² + i²) using `std::hypot` | none | double |
-| `conjugate()` | Returns new ComplexNumber with negated imag | none | ComplexNumber |
-| `operator+`, `-`, `*`, `/` | Component-wise / formula-based arithmetic | ComplexNumber | ComplexNumber |
-| `toString()` | Formats as `"z1 = 3 + 4i"` | none | string |
-| `argument()` | Returns angle (atan2) — used for rotation viz | none | double |
+| Member | What It Does | Returns |
+|---|---|---|
+| `ComplexNumber(real, imag)` | Constructor | object |
+| `real() const`, `imag() const` | Component accessors | double |
+| `magnitude() const` | √(r² + i²) via `std::hypot` | double |
+| `argument() const` | `std::atan2(imag, real)` | double |
+| `toString() const` | Formats as `"3 + 4i"` (handles negative imag) | string |
 
-### Free functions / modules
+### Free functions
 
-| Function | What It Does | Inputs | Outputs |
-|---|---|---|---|
-| `main()` | Init ncurses, load workspace, run menu loop, save & shutdown | argc, argv | int |
-| `displayMainMenu()` | Renders main menu in ncurses, returns user choice | none | enum MenuChoice |
-| `promptForNumber()` | Hybrid input screen: prompts for name + real + imag with validation | none | ComplexNumber |
-| `pickOperand(prompt)` | Lists saved numbers, returns selected index | string | size_t |
-| `runArithmetic(op)` | Picks two operands, computes, displays, logs, optionally saves result | enum Op | void |
-| `runComparison()` | Picks two operands, displays magnitudes, declares winner, logs | none | void |
-| `runConjugate()` | Picks one operand, displays conjugate, logs | none | void |
-| `openPlotView()` | Switches to plot ncurses window, handles pan/zoom/quit keys | vector of selected ComplexNumbers | void |
-| `drawAxes(win, vp)` | Renders x/y axes with tick labels | window, viewport | void |
-| `drawPoint(win, z, vp, marker)` | Plots a single number as a labeled marker | window, ComplexNumber, viewport, char | void |
-| `drawVector(win, z, vp)` | Draws a line from origin to z | window, ComplexNumber, viewport | void |
-| `drawMagnitudeCircle(win, z, vp)` | Draws circle of radius |z| centered at origin | window, ComplexNumber, viewport | void |
-| `drawParallelogram(win, z1, z2, vp)` | Visualizes z1 + z2 geometrically | window, two numbers, viewport | void |
-| `drawRotation(win, z1, z2, vp)` | Visualizes z1 * z2 as rotate-and-scale arc | window, two numbers, viewport | void |
-| `autoFitViewport(numbers)` | Computes scale to fit all numbers with padding | vector | Viewport |
-| `saveWorkspace(path, numbers)` | Writes named numbers to file (`name,real,imag` per line) | path, vector | bool |
-| `loadWorkspace(path)` | Parses workspace file; returns empty vector if missing | path | vector<ComplexNumber> |
-| `appendLog(path, entry)` | Appends one operation transcript line with timestamp | path, string | void |
-| `loadLog(path)` | Reads existing log into memory for "view history" feature | path | vector<string> |
-| `validateDouble(prompt)` | ncurses input loop; rejects non-numeric until valid | string | double |
-| `validateName(prompt, existing)` | Ensures name is non-empty and unique within workspace | string, vector | string |
+| Function | What It Does | Returns |
+|---|---|---|
+| `main()` | Greets, runs input/plot loop, returns 0 on `q` | int |
+| `promptForNumber(out)` | Prompts real then imag; validates each; returns false on `q` | bool |
+| `readDouble(prompt)` | Loops on `cin.fail()`, re-prompts on bad input | double |
+| `renderPlot(numbers, w, h)` | Builds and prints the ASCII grid for all numbers | void |
+| `autoScale(numbers, w, h)` | Returns units-per-cell that fits all current numbers + padding | double |
+| `drawLine(grid, x0, y0, x1, y1, ch)` | Bresenham line into the grid buffer | void |
 
-That's 6 class members + 22 free functions. Well above A-tier's "5+ functions" with clear separation of concerns: data (ComplexNumber), input/validation, operations, rendering, and persistence.
+That's 5 class members + 6 free functions = **11 components**, well above B tier's "5+" threshold, with clean separation: data (`ComplexNumber`), input (`prompt*`, `readDouble`), rendering (`renderPlot`, `autoScale`, `drawLine`), composition (`main`).
 
 ---
 
 ## 4. User Flow
 
-### Main path
-
-1. User runs `./complexlab`. ncurses initializes; `complexlab_workspace.txt` loads if present (otherwise empty workspace).
-2. Main menu appears: `[1] Add number  [2] List saved  [3] Run operation  [4] Plot  [5] View history  [6] Save & quit  [7] Quit without saving`.
-3. User adds two numbers: `z1 = 3 + 4i`, `z2 = 1 - 2i`.
-4. User picks `[3] Run operation`, then `[a] Add  [s] Sub  [m] Mul  [d] Div  [c] Compare magnitudes  [j] Conjugate`.
-5. Picks `Compare magnitudes`, picks z1 and z2 from list, sees `|z1| = 5.00, |z2| = 2.24, z1 is larger`. Operation is appended to in-memory log and `complexlab_history.log`.
-6. Picks `[4] Plot`, selects z1 and z2 (multi-select). Plot view opens with axes auto-fit; both numbers shown as labeled points + vectors + magnitude circles.
-7. From plot view: presses `+` to add a "sum" overlay (parallelogram for z1+z2), `*` for product (rotation arc), `arrow keys` to pan, `=`/`-` to zoom, `q` to return to main menu.
-8. Picks `[6] Save & quit`. Workspace and log are flushed; ncurses tears down; program exits.
+1. Run `./complexlab`.
+2. Program greets and shows brief instructions: *"Enter complex numbers; each is plotted on the Argand plane. Type `q` at the real-part prompt to quit."*
+3. Prompt: `Real part (or 'q' to quit): `. User types `3`.
+4. Prompt: `Imaginary part: `. User types `4`.
+5. Number is appended to the vector. The full plot is re-rendered, showing the axes, all numbers as vectors from origin, and a marker (`*` or a digit) at each tip. A legend prints below: `[0] 3 + 4i  |z|=5.00`.
+6. Loop back to step 3.
+7. User types `q` at the real prompt → loop exits, program ends.
 
 ### Key branches
-
-- **First run, no save file** → `loadWorkspace` returns empty vector; no error shown.
-- **Save file is corrupt or partially written** → skip malformed lines, show status-bar warning `"Skipped N malformed lines from workspace"`, continue.
-- **User picks operation requiring two operands but only one number is saved** → show message `"Add another number first"`, return to menu.
-- **Division by zero** (`z / 0+0i`) → catch before arithmetic; show `"Cannot divide by zero"`; do not log.
-- **Name collision** when adding (`z1` already exists) → re-prompt with `"Name already in use; choose another"`.
-- **Terminal too small for plot** (e.g., < 40×20) → show message in plot view, return to menu without crashing.
-- **Plot with all-zero numbers** → viewport falls back to default scale (1 unit per ~5 chars).
+- **Empty input loop** (user quits immediately with `q`) → exit cleanly without crashing.
+- **Bad input** (letters where a number is expected) → `readDouble` clears the stream and re-prompts.
+- **`q` at the *imaginary* prompt** → treated as bad input and re-prompts (quit is only at the real prompt, so the input flow stays predictable).
+- **Number at origin (0 + 0i)** → still rendered: marker at origin, no line drawn (length 0).
+- **All-zero plot** → axes still draw; scale falls back to default (1 unit per cell).
 
 ---
 
@@ -107,101 +84,89 @@ That's 6 class members + 22 free functions. Well above A-tier's "5+ functions" w
 
 | Risk | Plan |
 |---|---|
-| User enters text where a number is expected | `validateDouble` loops on `cin.fail()`, clears stream, re-prompts with error message |
-| Save file missing on first run | `loadWorkspace` checks `ifstream::is_open()`; returns empty vector silently |
-| Save file partially corrupt | Parse line-by-line; `try`/`catch` each line; count and report skipped lines |
-| Division by zero in `operator/` | Pre-check: if divisor's magnitude is 0 (within epsilon), throw `std::domain_error`; caller shows message instead of logging |
-| Very large or very small magnitudes break plot scaling | `autoFitViewport` clamps to a reasonable max scale; status bar shows actual range |
-| ncurses crashes mid-program (e.g., terminal resize) | Install `SIGWINCH` handler that re-fetches `getmaxyx` and redraws; fall back gracefully if too small |
-| Two numbers given the same name | `validateName` rejects duplicates at input time |
-| User force-quits (`Ctrl+C`) without saving | Register `atexit` handler that calls `endwin()` to restore terminal; data loss is acceptable since they chose not to save |
-| Floating-point comparison in `compareNumbers` shows "equal" inappropriately | Use epsilon-based comparison (`std::abs(d1 - d2) < 1e-9`) |
+| User types letters where a number is expected | `readDouble` checks `cin.fail()`, clears stream, ignores rest of line, re-prompts |
+| User enters very large numbers (1e100) | `std::hypot` is overflow-safe; `autoScale` keeps the grid bounded by recomputing units-per-cell |
+| User enters NaN/inf via expressions like `1e9999` | Reject if `!std::isfinite(value)` after read; re-prompt |
+| Negative imaginary part formatting (`3 + -4i`) | `toString` prints `"3 - 4i"` when imag < 0 |
+| Vector with one zero-length entry | `drawLine` short-circuits when start == end; only the marker is plotted |
+| Mixed signs that put origin off-grid | Auto-scale is symmetric: scale chosen so `max(|real|, |imag|)` of any entered number fits in half the grid, keeping origin centered |
 
 ---
 
 ## 6. What I'll Ask AI to Help With
 
-| Task | Why AI Help Makes Sense |
+| Task | Why |
 |---|---|
-| ncurses boilerplate (initscr, cbreak, noecho, color pairs, window creation) | I haven't used ncurses before; the API is large and I want correct setup, not to memorize flags |
-| Bresenham line algorithm for `drawVector` and `drawParallelogram` edges | Standard algorithm; I want a clean reference implementation rather than reinvent |
-| Midpoint circle algorithm for `drawMagnitudeCircle` | Same reason — well-known algorithm, want a tested version |
-| Reviewing my `operator*` and `operator/` for arithmetic correctness | Easy to flip a sign in the formula; AI can sanity-check against the standard formulas |
-| Suggesting cleaner organization once I have a working prototype | I expect my first cut to have logic mixed across files; want a refactor pass |
-| Generating edge-case test inputs for `testing_log.md` | AI is good at brainstorming "what if" cases I'd miss |
+| Bresenham line algorithm for the vector arrows | Well-known algorithm; want a tested reference |
+| Sanity-checking `autoScale` math (especially for edge cases) | Easy to get a sign or off-by-one wrong |
+| Edge cases for the testing log | AI is good at brainstorming inputs |
+| Final code-quality pass (unused includes, naming, consistency) | Cleanup is faster with a reviewer |
 
 ---
 
 ## 7. What I'll Do Myself (No AI)
 
-1. **The `ComplexNumber` class itself** — constructor, magnitude, conjugate, arithmetic operators, toString. The math here is the learning. I want to write each operator from the formula, not paste one in.
-2. **The main menu loop and state management** — deciding how the menu, operands, and plot view flow together is a design call, not a syntax question. AI can review it after; the structure is mine.
-3. **The viewport math** (`autoFitViewport`, world-to-screen coordinate transform). This is the kind of geometry problem where doing it myself builds intuition I'll reuse forever.
+**Status for v2:** This restart overrides §7. The previous attempt — where I was writing the `ComplexNumber` class, menu, and viewport math by hand — broke down and led to the wipe. For v2 I've asked AI to scaffold the whole project so I can study a working baseline, then take ownership of changes from there. The reflection section will note this decision honestly.
 
 ---
 
 ## 8. Scope Check
 
-- Can I build the C-tier version (add numbers, compare magnitudes, plot points only) in one focused session? **Yes.**
-- Does every feature in my plan connect to the core interaction (visualizing complex numbers)? **Yes** — every operation has a visualization, every saved number is plottable.
-- Have I cut anything that's "nice to have" but not essential? **Yes** — explicitly cut: polar-form input, custom color themes, exporting plots to image files, undo/redo.
+- Can I build the C-tier version (input numbers, see them plotted) in one session? **Yes.**
+- Does every feature connect to the core interaction (visualizing complex numbers)? **Yes.**
+- Have I cut anything that's "nice to have"? **Yes** — explicitly cut: ncurses, persistence to file, operation log, arithmetic operators, magnitude circles, parallelograms, rotation arcs, multi-number selection, pan/zoom, named numbers. Many of these may return as stretch goals.
 
-**Stretch goals (only if A-tier ships early):**
-- Polar input mode (`r∠θ` instead of `a + bi`)
-- Color: real axis red, imaginary axis blue, vectors by index color
-- "Animate" multiplication: redraw rotation in steps
+**Stretch goals (only if base ships early):**
+- Show a magnitude circle (radius |z|) around the origin for the most-recent number.
+- Show an angle arc indicating the argument of the most-recent number.
+- Pair-wise sum: enter two numbers, render z₁, z₂, and z₁+z₂ as a parallelogram.
+- Save the current list to a text file and reload on launch.
 
 ---
 
-## 9. Requirements Analysis (Badge Track)
+## 9. Requirements Analysis
 
 ### Functional requirements
-- **FR1** Input two or more complex numbers via guided prompts with validation.
-- **FR2** Compute magnitude, conjugate, sum, difference, product, quotient of any saved pair (or single, for conjugate).
-- **FR3** Compare magnitudes of any two saved numbers.
-- **FR4** Render a 2D ASCII plot of any subset of saved numbers as points + vectors + magnitude circles.
-- **FR5** Render geometric visualizations of addition (parallelogram) and multiplication (rotation/scale).
-- **FR6** Persist named numbers to a workspace file across sessions.
-- **FR7** Persist an append-only operation log across sessions, viewable from the main menu.
-- **FR8** Pan and zoom the plot view via keyboard.
+- **FR1** Prompt the user for the real part, then the imaginary part, of a complex number.
+- **FR2** Validate numeric input and re-prompt on bad input without crashing.
+- **FR3** Render a 2D ASCII plot of all entered numbers as vectors from origin, with labeled axes.
+- **FR4** Auto-scale the plot so every entered number fits with padding.
+- **FR5** Display a legend below the plot listing each number and its magnitude.
+- **FR6** Allow the user to quit cleanly by typing `q` at the real-part prompt.
 
 ### Non-functional requirements
-- **NFR1** Compiles with `g++ -std=c++17 -Wall -Wextra -lncurses` with zero warnings.
-- **NFR2** No undefined behavior on bad input — all `cin` failures recovered.
-- **NFR3** Workspace file is human-readable plain text (CSV-like).
-- **NFR4** Plot renders in any terminal ≥ 40 cols × 20 rows; degrades gracefully below that.
-- **NFR5** No memory leaks (all `WINDOW*` paired with `delwin`; `endwin` on every exit path).
+- **NFR1** Compiles with `g++ -std=c++17 -Wall -Wextra` with zero warnings.
+- **NFR2** No crashes on any input — all `cin` failures recovered.
+- **NFR3** Runs in any terminal at least as wide as the plot grid (61 cols default).
+- **NFR4** No external dependencies beyond the C++17 standard library.
 
 ### Out of scope
-- 3D visualization, GUI windows, exporting to image formats, network features, multiple users.
+- ncurses or any TUI library, persistence to disk, arithmetic operations between numbers, multi-number geometric overlays, color, pan/zoom.
 
 ---
 
-## 10. OO Design Notes (Badge Track)
+## 10. OO Design Notes
 
-The only class is `ComplexNumber`. Other code is organized into namespaces / translation units, not classes — overengineering with classes for menu state, file I/O, etc. would muddy a small project.
+`ComplexNumber` is the only class. It is intentionally minimal — just the data and the queries the plot needs. Free functions handle input and rendering because they don't share state worth wrapping in a class.
 
 ```
 ComplexNumber
-├── data:    string name, double real, double imag
-├── queries: magnitude(), argument(), conjugate(), toString()
-└── ops:     operator+, -, *, /  (return new ComplexNumber)
+├── data:    double real_, double imag_
+└── queries: real(), imag(), magnitude(), argument(), toString()
 ```
 
-Operators are defined as **non-modifying** member functions returning new objects (immutable-style). Rationale: arithmetic on complex numbers should never mutate operands; this matches mathematical intuition and prevents aliasing bugs.
-
-`name` is part of the object because the workspace concept requires it. A pure-math view would put name in a separate `NamedNumber` wrapper, but the project is about labeled, plottable numbers — coupling name in keeps the API simple.
+There are no operators in this version. Adding `operator+` etc. is a stretch goal, not a base requirement.
 
 ### File layout
 ```
-project4/
+M8/
 ├── design_doc.md
 ├── src/
-│   ├── ComplexNumber.h / .cpp     ← class definition
-│   ├── plot.h / .cpp              ← ncurses rendering
-│   ├── workspace.h / .cpp         ← save/load/log
-│   ├── ui.h / .cpp                ← menu, prompts, validation
-│   └── main.cpp                   ← composition root
+│   ├── ComplexNumber.h / .cpp     ← class
+│   ├── plot.h / .cpp              ← ASCII rendering + autoScale + drawLine
+│   ├── input.h / .cpp             ← readDouble, promptForNumber
+│   └── main.cpp                   ← loop
+├── Makefile
 ├── ai_log.md
 ├── testing_log.md
 └── README.md
@@ -209,43 +174,31 @@ project4/
 
 ---
 
-## 11. Test Plan (Badge Track)
-
-### Unit-level (manual, recorded in `testing_log.md`)
-- `ComplexNumber(3,4).magnitude() == 5.0` (within epsilon)
-- `(3+4i) + (1-2i) == 4+2i`
-- `(3+4i) * (1-2i) == 11-2i`
-- `(3+4i) / (0+0i)` throws `domain_error`
-- `(3+4i).conjugate() == 3-4i`
+## 11. Test Plan
 
 ### Input validation
-- Type letters when number expected → re-prompts, no crash
-- Empty name → re-prompts
-- Duplicate name → re-prompts
-- Very large numbers (1e100) → no overflow in magnitude (`std::hypot` is safe)
+- Type letters at real prompt → re-prompts, no crash.
+- Type letters at imaginary prompt → re-prompts, no crash.
+- Type `q` at real prompt → program exits cleanly.
+- Type `q` at imaginary prompt → re-prompts (quit only valid at real prompt).
+- Type a huge number (1e100) → accepted; plot rescales.
+- Type `nan` or expressions that produce non-finite values → rejected with a message.
 
-### Persistence
-- Fresh run with no files → empty workspace, no error
-- Save 3 numbers, quit, relaunch → all 3 reappear
-- Manually corrupt one line of workspace file → other lines load, warning shown
-- Operation log grows across sessions (append, not overwrite)
-
-### Plot
-- Plot single number at origin → no crash, no division by zero in viewport
-- Plot two numbers, one tiny (0.001) one huge (1000) → autofit picks the larger; tiny is at origin
-- Resize terminal mid-plot → redraws or shows "too small" message
-- Plot with sum overlay → parallelogram corners match z1, z2, z1+z2
-- Plot with product overlay → rotation arc visible
+### Rendering
+- Enter `3, 4` → vector from origin to upper-right; marker at tip; legend shows `|z|=5.00`.
+- Enter `-3, -4` → vector to lower-left; legend shows same magnitude.
+- Enter `0, 0` → marker at origin only; no line.
+- Enter two numbers with very different magnitudes (e.g., `1,1` then `100,100`) → both fit; smaller one near origin.
+- Enter five numbers → all five plotted with distinct markers/labels.
 
 ### Build
-- Clean build on Codespaces (`g++ -std=c++17 -Wall -Wextra -lncurses src/*.cpp -o complexlab`)
-- Zero warnings
+- `make` on Codespaces produces `./complexlab` with zero warnings.
 
 ---
 
 ## 12. Portfolio Reflection (filled in at end of project)
 
-*To be written in Week 15. Will cover: what I learned about directing AI vs. writing code; what surprised me about ncurses; the moment I rejected an AI suggestion and why; how the design changed from this doc to the final product.*
+*To be written in Week 15. Will cover: what went wrong with the first attempt and what I learned from scrapping it; how cutting scope changed what was possible; the tradeoff between "I write it myself" and "let AI scaffold so I can study a working version"; what I'd add back if I had more time.*
 
 ---
 
@@ -253,12 +206,10 @@ project4/
 
 *To be filled out during Week 13 check-in:*
 
-- [ ] Scope is appropriate for badge track
+- [ ] Scope is appropriate for Track A
 - [ ] State inventory is complete
 - [ ] Function map shows clear decomposition
-- [ ] Student knows what they'll ask AI for and what they'll do themselves
-- [ ] OO design is justified, not bolted on
+- [ ] Student knows what they'll ask AI for
 - [ ] Test plan covers the risky parts
 
 **Notes:**
-
